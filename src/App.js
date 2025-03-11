@@ -3,13 +3,13 @@ import React from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 //import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import GlobalStyle from './styles/GlobalStyle';
 import theme from './styles/theme';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import BlogPost from './pages/BlogPost';
 import AboutPage from './pages/AboutPage';
+import GlobalStyle from './styles/GlobalStyle';
 
 function App() {
   return (
