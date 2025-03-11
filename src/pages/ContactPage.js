@@ -302,25 +302,24 @@ function ContactPage() {
 
                     <InfoItem>
                         <h3>Email</h3>
-                        <p><a href="mailto:jane.waithira@example.com">jane.waithira@example.com</a></p>
+                        <p><a href="mailto:waithiramacharia285@gmail.com">jane.waithira@gmail.com</a></p>
                     </InfoItem>
 
                     <InfoItem>
                         <h3>Phone</h3>
-                        <p>+254 (0)721615405</p>
+                        <p>+49 (0)17635486821</p>
                     </InfoItem>
 
                     <InfoItem>
                         <h3>Location</h3>
-                        <p>Nairobi, Kenya</p>
+                        <p>Walldorf, Germany</p>
                     </InfoItem>
 
                     <InfoItem>
                         <h3>Connect With Me</h3>
                         <SocialLinks>
-                            <a href="https://github.com/" aria-label="GitHub" target="_blank" rel="noopener noreferrer">GH</a>
-                            <a href="https://linkedin.com/in/jane-waithira" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">LI</a>
-                            <a href="https://twitter.com/" aria-label="Twitter" target="_blank" rel="noopener noreferrer">TW</a>
+                            <a href="https://github.com/Machariajane" aria-label="GitHub" target="_blank" rel="noopener noreferrer">GH</a>
+                            <a href="https://www.linkedin.com/in/waithira-macharia/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">LI</a>
                         </SocialLinks>
                     </InfoItem>
 

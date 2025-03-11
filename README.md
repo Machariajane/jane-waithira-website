@@ -232,3 +232,4 @@ The contact form is functional but doesn't submit data anywhere. To connect it:
 1. Open `src/pages/ContactPage.js`
 2. Modify the `handleSubmit` function to send data to your preferred service
    (e.g., Formspree, Netlify Forms, or a custom backend)
+3. I'll implement the email functionality using EmailJS, which is one of the simplest solutions for React applications. It allows you to send emails directly from the client-side without setting up a backend server.
