@@ -1,7 +1,7 @@
 // src/pages/ExperiencePage.js
 import React from 'react';
 import styled from 'styled-components';
-import Divider from '../components/Divider';
+import Divider from '../components/RomanDivider';
 
 const PageContainer = styled.div`
   max-width: 900px;

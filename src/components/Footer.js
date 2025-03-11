@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import Divider from '../components/Divider';
+import Divider from '../components/RomanDivider';
 
 const HeroSection = styled.section`
   min-height: 70vh;
