@@ -1,242 +1,182 @@
-// src/pages/HomePage.js
+// src/components/Footer.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import Divider from '../components/RomanDivider';
 
-const HeroSection = styled.section`
-  min-height: 70vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing.xlarge};
-  background-color: ${({ theme }) => theme.colors.background};
-  position: relative;
-  
-  @media (min-width: 768px) {
-    flex-direction: row;
-    align-items: center;
-  }
-`;
-
-const HeroContent = styled.div`
-  max-width: 600px;
-  
-  @media (min-width: 768px) {
-    margin-right: ${({ theme }) => theme.spacing.xlarge};
-  }
-`;
-
-const HeroImage = styled.div`
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.accent};
-  background-image: url('/images/profile.jpg');
-  background-size: cover;
-  background-position: center;
-  margin: ${({ theme }) => theme.spacing.xlarge} auto 0;
-  border: 4px solid ${({ theme }) => theme.colors.light};
-  box-shadow: ${({ theme }) => theme.shadows.medium};
-  
-  @media (min-width: 768px) {
-    margin: 0;
-  }
-`;
-
-const Greeting = styled.p`
-  font-family: ${({ theme }) => theme.fonts.heading};
-  font-size: 1.2rem;
-  color: ${({ theme }) => theme.colors.secondary};
-  margin-bottom: ${({ theme }) => theme.spacing.small};
-`;
-
-const Name = styled.h1`
-  font-size: 3rem;
-  margin-bottom: ${({ theme }) => theme.spacing.small};
-  color: ${({ theme }) => theme.colors.primary};
-  
-  &:after {
-    display: none;
-  }
-`;
-
-const Title = styled.h2`
-  font-size: 1.5rem;
-  margin-bottom: ${({ theme }) => theme.spacing.large};
-  color: ${({ theme }) => theme.colors.accent};
-  font-weight: 400;
-`;
-
-const Bio = styled.p`
-  font-size: 1.1rem;
-  line-height: 1.7;
-  margin-bottom: ${({ theme }) => theme.spacing.large};
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing.medium};
-`;
-
-const Button = styled(Link)`
-  display: inline-block;
-  padding: ${({ theme }) => `${theme.spacing.medium} ${theme.spacing.large}`};
-  background-color: ${({ theme, secondary }) => secondary ? 'transparent' : theme.colors.secondary};
-  color: ${({ theme, secondary }) => secondary ? theme.colors.secondary : theme.colors.light};
-  font-weight: 500;
-  font-size: 1rem;
-  letter-spacing: 0.5px;
-  border: 2px solid ${({ theme }) => theme.colors.secondary};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  transition: all 0.3s ease;
-  text-decoration: none;
-  
-  &:hover {
-    background-color: ${({ theme, secondary }) => secondary ? theme.colors.secondary : theme.colors.highlight};
-    border-color: ${({ theme, secondary }) => secondary ? theme.colors.secondary : theme.colors.highlight};
+const FooterContainer = styled.footer`
+    background-color: ${({ theme }) => theme.colors.dark};
     color: ${({ theme }) => theme.colors.light};
-    transform: translateY(-2px);
-    box-shadow: ${({ theme }) => theme.shadows.medium};
-  }
+    padding: ${({ theme }) => theme.spacing.xlarge} 0;
+    position: relative;
+
+    &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(to right,
+        ${({ theme }) => theme.colors.secondary},
+        ${({ theme }) => theme.colors.accent},
+        ${({ theme }) => theme.colors.secondary}
+        );
+    }
 `;
 
-const HighlightsSection = styled.section`
-  padding: ${({ theme }) => theme.spacing.xlarge} ${({ theme }) => theme.spacing.large};
-  max-width: ${({ theme }) => theme.maxWidth};
-  margin: 0 auto;
+const FooterContent = styled.div`
+    max-width: ${({ theme }) => theme.maxWidth};
+    margin: 0 auto;
+    padding: 0 ${({ theme }) => theme.spacing.large};
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: ${({ theme }) => theme.spacing.xlarge};
 `;
 
-const SectionTitle = styled.h2`
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xlarge};
-  position: relative;
-  
-  &:after {
-    content: "";
-    display: block;
-    width: 60px;
-    height: 3px;
-    background-color: ${({ theme }) => theme.colors.secondary};
-    margin: ${({ theme }) => theme.spacing.small} auto 0;
-  }
-`;
-
-const HighlightsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme.spacing.large};
-`;
-
-const HighlightCard = styled.div`
-  background-color: ${({ theme }) => theme.colors.light};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  padding: ${({ theme }) => theme.spacing.large};
-  box-shadow: ${({ theme }) => theme.shadows.small};
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: ${({ theme }) => theme.shadows.medium};
-  }
-  
+const FooterSection = styled.div`
   h3 {
-    font-size: 1.4rem;
+    font-family: ${({ theme }) => theme.fonts.heading};
+    color: ${({ theme }) => theme.colors.light};
     margin-bottom: ${({ theme }) => theme.spacing.medium};
-    color: ${({ theme }) => theme.colors.primary};
+    position: relative;
+    display: inline-block;
     
-    span {
-      color: ${({ theme }) => theme.colors.secondary};
+    &:after {
+      content: "";
+      display: block;
+      width: 40px;
+      height: 2px;
+      background-color: ${({ theme }) => theme.colors.secondary};
+      margin-top: ${({ theme }) => theme.spacing.small};
     }
   }
   
   p {
-    font-size: 0.95rem;
+    margin-bottom: ${({ theme }) => theme.spacing.medium};
+    font-size: 0.9rem;
     line-height: 1.6;
+    opacity: 0.9;
+  }
+  
+  ul {
+    list-style: none;
+    
+    li {
+      margin-bottom: ${({ theme }) => theme.spacing.small};
+    }
+    
+    a {
+      color: ${({ theme }) => theme.colors.light};
+      text-decoration: none;
+      transition: color 0.2s ease;
+      display: inline-block;
+      opacity: 0.9;
+      
+      &:hover {
+        color: ${({ theme }) => theme.colors.secondary};
+        transform: translateX(2px);
+      }
+    }
   }
 `;
 
-function HomePage() {
+const SocialLinks = styled.div`
+    display: flex;
+    gap: ${({ theme }) => theme.spacing.medium};
+    margin-top: ${({ theme }) => theme.spacing.medium};
+
+    a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: ${({ theme }) => theme.colors.light};
+        transition: all 0.3s ease;
+
+        &:hover {
+            background-color: ${({ theme }) => theme.colors.secondary};
+            color: ${({ theme }) => theme.colors.light};
+            transform: translateY(-3px);
+        }
+    }
+`;
+
+const FooterBottom = styled.div`
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: ${({ theme }) => theme.spacing.xlarge};
+    padding-top: ${({ theme }) => theme.spacing.large};
+    text-align: center;
+    max-width: ${({ theme }) => theme.maxWidth};
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: ${({ theme }) => theme.spacing.large};
+    padding-right: ${({ theme }) => theme.spacing.large};
+
+    p {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    a {
+        color: ${({ theme }) => theme.colors.secondary};
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+`;
+
+function Footer() {
+    const currentYear = new Date().getFullYear();
+
     return (
-        <main>
-            <HeroSection>
-                <HeroContent>
-                    <Greeting>Hello, I'm</Greeting>
-                    <Name>Jane Waithira</Name>
-                    <Title>Data Scientist & ML Engineer</Title>
-                    <Bio>
-                        Passionate about leveraging data to build intelligent systems that solve real-world problems.
-                        With experience in real-time personalization, ML model deployment, and causal inference,
-                        I help organizations make data-driven decisions.
-                    </Bio>
-                    <ButtonGroup>
-                        <Button to="/experience">View Experience</Button>
-                        <Button to="/contact" secondary>Get In Touch</Button>
-                    </ButtonGroup>
-                </HeroContent>
-                <HeroImage />
-            </HeroSection>
-
-            <HighlightsSection>
-                <SectionTitle>Career Highlights</SectionTitle>
-                <HighlightsGrid>
-                    <HighlightCard>
-                        <h3>Real-time <span>Personalization</span></h3>
-                        <p>
-                            Led a personalization engine project recommending data offers to 5M+ customers,
-                            using Q-learning and Multi-Armed Bandit approaches, with validated improvements through A/B testing.
-                        </p>
-                    </HighlightCard>
-
-                    <HighlightCard>
-                        <h3>GenAI for <span>Customer Feedback</span></h3>
-                        <p>
-                            Used GenAI for topic modeling and sentiment analysis, integrating it into a system
-                            that autonomously responds to customer feedback, improving the Net Promoter Score.
-                        </p>
-                    </HighlightCard>
-
-                    <HighlightCard>
-                        <h3>ML for <span>Revenue Growth</span></h3>
-                        <p>
-                            Developed a voice diagnostics model using causal graphs to identify products
-                            significantly impacting voice revenue trends, enabling strategic focus on high-impact areas.
-                        </p>
-                    </HighlightCard>
-
-                    <HighlightCard>
-                        <h3>Forecasting <span>Customer Behavior</span></h3>
-                        <p>
-                            Built a survival model using random survival forests to predict customer phone change patterns,
-                            resulting in targeted campaigns with 100% month-on-month conversion uplift.
-                        </p>
-                    </HighlightCard>
-                </HighlightsGrid>
-            </HighlightsSection>
-
-            <Divider />
-
-            <HighlightsSection>
-                <SectionTitle>Why Work With Me</SectionTitle>
-                <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
+        <FooterContainer>
+            <FooterContent>
+                <FooterSection>
+                    <h3>About Me</h3>
                     <p>
-                        With a background in Telecommunications and Information Engineering and a passion for data science,
-                        I bring both technical depth and business acumen to every project. I've successfully
-                        implemented machine learning solutions that have directly impacted business metrics and
-                        improved customer experiences.
+                        Data Scientist & ML Engineer with experience in creating real-time personalization engines,
+                        sentiment analysis systems, and predictive models that drive business value.
                     </p>
-                    <p>
-                        I'm committed to continuous learning and staying at the forefront of AI advancements,
-                        as evidenced by my participation in competitions, workshops, and mentorship programs.
-                    </p>
-                    <Button to="/contact" secondary style={{ marginTop: '20px' }}>
-                        Contact Me
-                    </Button>
-                </div>
-            </HighlightsSection>
-        </main>
+                    <SocialLinks>
+                        <a href="https://github.com/" aria-label="GitHub" target="_blank" rel="noopener noreferrer">GH</a>
+                        <a href="https://linkedin.com/in/jane-waithira" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">LI</a>
+                        <a href="https://twitter.com/" aria-label="Twitter" target="_blank" rel="noopener noreferrer">TW</a>
+                    </SocialLinks>
+                </FooterSection>
+
+                <FooterSection>
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/experience">Experience</Link></li>
+                        <li><Link to="/education">Education</Link></li>
+                        <li><Link to="/skills">Skills & Projects</Link></li>
+                        <li><Link to="/contact">Contact</Link></li>
+                    </ul>
+                </FooterSection>
+
+                <FooterSection>
+                    <h3>Contact Info</h3>
+                    <ul>
+                        <li>+254 (0)721615405</li>
+                        <li>jane.waithira@example.com</li>
+                        <li>Nairobi, Kenya</li>
+                    </ul>
+                </FooterSection>
+            </FooterContent>
+
+            <FooterBottom>
+                <p>
+                    &copy; {currentYear} Jane Waithira. All rights reserved.
+                </p>
+            </FooterBottom>
+        </FooterContainer>
     );
 }
 
-export default HomePage;
+export default Footer;
