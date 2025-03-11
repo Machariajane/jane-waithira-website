@@ -10,6 +10,7 @@ import HomePage from './pages/HomePage';
 import ExperiencePage from './pages/ExperiencePage';
 import EducationPage from './pages/EducationPage';
 import SkillsPage from './pages/SkillsPage';
+import ProjectsPage from './pages/ProjectsPage';
 import ContactPage from './pages/ContactPage';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
                     <Route path="/experience" element={<ExperiencePage />} />
                     <Route path="/education" element={<EducationPage />} />
                     <Route path="/skills" element={<SkillsPage />} />
+                    <Route path="/projects" element={<ProjectsPage />} />
                     <Route path="/contact" element={<ContactPage />} />
                 </Routes>
                 <Footer />

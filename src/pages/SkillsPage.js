@@ -4,144 +4,81 @@ import styled from 'styled-components';
 import Divider from '../components/RomanDivider';
 
 const PageContainer = styled.div`
-  max-width: 900px;
-  margin: 0 auto;
-  padding: ${({ theme }) => theme.spacing.xlarge};
+    max-width: 900px;
+    margin: 0 auto;
+    padding: ${({ theme }) => theme.spacing.xlarge};
 `;
 
 const PageTitle = styled.h1`
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xlarge};
+    text-align: center;
+    margin-bottom: ${({ theme }) => theme.spacing.xlarge};
 `;
 
 const SectionTitle = styled.h2`
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing.large};
-  position: relative;
-  
-  &:after {
-    content: "";
-    display: block;
-    width: 60px;
-    height: 3px;
-    background-color: ${({ theme }) => theme.colors.secondary};
-    margin: ${({ theme }) => theme.spacing.small} auto 0;
-  }
+    text-align: center;
+    margin-bottom: ${({ theme }) => theme.spacing.large};
+    position: relative;
+
+    &:after {
+        content: "";
+        display: block;
+        width: 60px;
+        height: 3px;
+        background-color: ${({ theme }) => theme.colors.secondary};
+        margin: ${({ theme }) => theme.spacing.small} auto 0;
+    }
 `;
 
 const SkillsSection = styled.section`
-  margin-bottom: ${({ theme }) => theme.spacing.xlarge};
+    margin-bottom: ${({ theme }) => theme.spacing.xlarge};
 `;
 
 const SkillsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: ${({ theme }) => theme.spacing.large};
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: ${({ theme }) => theme.spacing.large};
 `;
 
 const SkillCard = styled.div`
-  background-color: ${({ theme }) => theme.colors.light};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  padding: ${({ theme }) => theme.spacing.large};
-  box-shadow: ${({ theme }) => theme.shadows.small};
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: ${({ theme }) => theme.shadows.medium};
-  }
-  
-  h3 {
-    margin-bottom: ${({ theme }) => theme.spacing.medium};
-    color: ${({ theme }) => theme.colors.secondary};
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-    
-    li {
-      margin-bottom: ${({ theme }) => theme.spacing.small};
-      font-size: 0.95rem;
+    background-color: ${({ theme }) => theme.colors.light};
+    border-radius: ${({ theme }) => theme.borderRadius};
+    padding: ${({ theme }) => theme.spacing.large};
+    box-shadow: ${({ theme }) => theme.shadows.small};
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: ${({ theme }) => theme.shadows.medium};
     }
-  }
-`;
 
-const ProjectsSection = styled.section`
-  margin-top: ${({ theme }) => theme.spacing.xlarge};
-`;
-
-const ProjectsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: ${({ theme }) => theme.spacing.large};
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const ProjectCard = styled.div`
-  background-color: ${({ theme }) => theme.colors.light};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadows.small};
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: ${({ theme }) => theme.shadows.medium};
-  }
-`;
-
-const ProjectHeader = styled.div`
-  padding: ${({ theme }) => theme.spacing.medium};
-  background-color: ${({ theme }) => theme.colors.secondary};
-  color: ${({ theme }) => theme.colors.light};
-`;
-
-const ProjectTitle = styled.h3`
-  margin-bottom: 0;
-  font-size: 1.2rem;
-`;
-
-const ProjectContent = styled.div`
-  padding: ${({ theme }) => theme.spacing.large};
-  
-  p {
-    margin-bottom: ${({ theme }) => theme.spacing.medium};
-    font-size: 0.95rem;
-  }
-  
-  h4 {
-    font-size: 1rem;
-    margin-bottom: ${({ theme }) => theme.spacing.small};
-    color: ${({ theme }) => theme.colors.primary};
-  }
-  
-  ul {
-    padding-left: 20px;
-    margin-bottom: ${({ theme }) => theme.spacing.medium};
-    
-    li {
-      margin-bottom: ${({ theme }) => theme.spacing.small};
-      font-size: 0.9rem;
+    h3 {
+        margin-bottom: ${({ theme }) => theme.spacing.medium};
+        color: ${({ theme }) => theme.colors.secondary};
     }
-  }
+
+    ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+            margin-bottom: ${({ theme }) => theme.spacing.small};
+            font-size: 0.95rem;
+        }
+    }
 `;
 
-const AwardSection = styled.section`
-  margin-top: ${({ theme }) => theme.spacing.xlarge};
+const TechnicalSection = styled.section`
+    margin-top: ${({ theme }) => theme.spacing.xlarge};
 `;
 
-const AwardsList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme.spacing.large};
+const TechnicalContent = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: ${({ theme }) => theme.spacing.large};
 `;
 
-const AwardCard = styled.div`
+const TechnicalCard = styled.div`
   background-color: ${({ theme }) => theme.colors.light};
   border-radius: ${({ theme }) => theme.borderRadius};
   padding: ${({ theme }) => theme.spacing.large};
@@ -155,22 +92,20 @@ const AwardCard = styled.div`
   
   h3 {
     font-size: 1.2rem;
-    margin-bottom: ${({ theme }) => theme.spacing.small};
-    color: ${({ theme }) => theme.colors.primary};
-  }
-  
-  h4 {
-    font-size: 1rem;
-    color: ${({ theme }) => theme.colors.secondary};
-    margin-bottom: ${({ theme }) => theme.spacing.small};
-  }
-  
-  p {
-    font-size: 0.9rem;
-    font-style: italic;
     margin-bottom: ${({ theme }) => theme.spacing.medium};
-    color: ${({ theme }) => theme.colors.text};
-    opacity: 0.8;
+    color: ${({ theme }) => theme.colors.secondary};
+    position: relative;
+    display: inline-block;
+    
+    &:after {
+      content: "";
+      display: block;
+      width: 40px;
+      height: 2px;
+      background-color: ${({ theme }) => theme.colors.secondary};
+      margin-top: ${({ theme }) => theme.spacing.small};
+      opacity: 0.6;
+    }
   }
   
   ul {
@@ -238,70 +173,35 @@ function SkillsPage() {
         }
     ];
 
-    const projects = [
+    const technicalAreas = [
         {
-            title: "Real-time Personalization Engine",
-            description: "Led the development of a recommendation system for data offers, serving 5M+ customers.",
-            technologies: ["Python", "AWS", "Multi-Armed Bandits", "A/B Testing"],
-            achievements: [
-                "Designed and implemented a real-time personalization engine",
-                "Applied reinforcement learning techniques (Q-learning/MAB)",
-                "Conducted A/B tests to assess performance improvements",
-                "Generated comprehensive reports for stakeholders"
+            title: "Machine Learning",
+            skills: [
+                "Supervised learning algorithms (regression, classification, ensemble methods)",
+                "Reinforcement learning (Q-learning, Multi-Armed Bandits)",
+                "Deep learning (CNN, RNN, Transformers)",
+                "Model optimization and hyperparameter tuning",
+                "Model deployment and monitoring"
             ]
         },
         {
-            title: "Autonomous Customer Feedback System",
-            description: "Developed a GenAI system for analyzing and responding to customer feedback automatically.",
-            technologies: ["NLP", "Sentiment Analysis", "Topic Modeling", "Python"],
-            achievements: [
-                "Integrated GenAI for topic modeling and sentiment analysis",
-                "Built an end-to-end system for autonomous responses",
-                "Improved Net Promoter Score (NPS)",
-                "Reduced manual review time by 70%"
+            title: "Data Analysis",
+            skills: [
+                "Statistical analysis and hypothesis testing",
+                "Exploratory data analysis",
+                "Feature engineering and selection",
+                "Dimensionality reduction techniques",
+                "Data visualization and storytelling"
             ]
         },
         {
-            title: "Voice Revenue Diagnostics Model",
-            description: "Created a causal inference model to identify products impacting voice revenue trends.",
-            technologies: ["Causal Graphs", "Python", "Statistical Analysis"],
-            achievements: [
-                "Developed a diagnostic model using causal graphs",
-                "Identified key products affecting revenue trends",
-                "Enabled stakeholders to focus on high-impact areas",
-                "Presented findings to executive leadership"
-            ]
-        }
-    ];
-
-    const awards = [
-        {
-            title: "Vodacom/Safaricom Big Data Conference",
-            organization: "Vodacom, South Africa",
-            date: "October 2023",
-            details: [
-                "Sponsored attendee at a big data conference and hackathon in Midrand, South Africa",
-                "Participated in hackathon challenges including building conversational AI, income prediction modeling, and Battlesnakes competition"
-            ]
-        },
-        {
-            title: "UbuntuNet Africa Hackathon and Conference",
-            organization: "Uganda",
-            date: "October 2023",
-            details: [
-                "Recognized as one of the top five projects in Africa, selected from over 200 concept papers",
-                "Focused on innovation for 21st-century education",
-                "Developed skills in writing software requirement specifications and design documents"
-            ]
-        },
-        {
-            title: "Data Science Africa (DSA) Summer School",
-            organization: "Rwanda",
-            date: "May 2023",
-            details: [
-                "Sponsored participant in a one-week summer school and workshop in Kigali, Rwanda",
-                "Theme: 'Harnessing Data Science for Africa's Socio-Economic Development'",
-                "Explored deploying machine learning models on edge devices and associated challenges"
+            title: "Big Data Processing",
+            skills: [
+                "Distributed computing frameworks",
+                "Cloud-based data processing",
+                "ETL pipeline development",
+                "Real-time and batch processing",
+                "Data architecture design"
             ]
         }
     ];
@@ -327,49 +227,21 @@ function SkillsPage() {
 
             <Divider />
 
-            <ProjectsSection>
-                <SectionTitle>Key Projects</SectionTitle>
-                <ProjectsGrid>
-                    {projects.map((project, index) => (
-                        <ProjectCard key={index}>
-                            <ProjectHeader>
-                                <ProjectTitle>{project.title}</ProjectTitle>
-                            </ProjectHeader>
-                            <ProjectContent>
-                                <p>{project.description}</p>
-                                <h4>Technologies Used:</h4>
-                                <p>{project.technologies.join(", ")}</p>
-                                <h4>Achievements:</h4>
-                                <ul>
-                                    {project.achievements.map((achievement, i) => (
-                                        <li key={i}>{achievement}</li>
-                                    ))}
-                                </ul>
-                            </ProjectContent>
-                        </ProjectCard>
-                    ))}
-                </ProjectsGrid>
-            </ProjectsSection>
-
-            <Divider />
-
-            <AwardSection>
-                <SectionTitle>Awards & Recognition</SectionTitle>
-                <AwardsList>
-                    {awards.map((award, index) => (
-                        <AwardCard key={index}>
-                            <h3>{award.title}</h3>
-                            <h4>{award.organization}</h4>
-                            <p>{award.date}</p>
+            <TechnicalSection>
+                <SectionTitle>Technical Expertise</SectionTitle>
+                <TechnicalContent>
+                    {technicalAreas.map((area, index) => (
+                        <TechnicalCard key={index}>
+                            <h3>{area.title}</h3>
                             <ul>
-                                {award.details.map((detail, i) => (
-                                    <li key={i}>{detail}</li>
+                                {area.skills.map((skill, i) => (
+                                    <li key={i}>{skill}</li>
                                 ))}
                             </ul>
-                        </AwardCard>
+                        </TechnicalCard>
                     ))}
-                </AwardsList>
-            </AwardSection>
+                </TechnicalContent>
+            </TechnicalSection>
 
             <Divider />
 
