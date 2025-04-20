@@ -302,12 +302,7 @@ function ContactPage() {
 
                     <InfoItem>
                         <h3>Email</h3>
-                        <p><a href="mailto:waithiramacharia285@gmail.com">jane.waithira@gmail.com</a></p>
-                    </InfoItem>
-
-                    <InfoItem>
-                        <h3>Phone</h3>
-                        <p>+49 (0)17635486821</p>
+                        <p><a href="mailto:waithiramacharia285@gmail.com">jane.waithira</a></p>
                     </InfoItem>
 
                     <InfoItem>
