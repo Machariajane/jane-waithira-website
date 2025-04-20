@@ -139,13 +139,12 @@ function Footer() {
                 <FooterSection>
                     <h3>About Me</h3>
                     <p>
-                        Data Scientist & ML Engineer with experience in creating real-time personalization engines,
+                        Data Scientist & ML Engineer with experience in creating Agentic Apps, real-time personalization engines,
                         sentiment analysis systems, and predictive models that drive business value.
                     </p>
                     <SocialLinks>
                         <a href="https://github.com/" aria-label="GitHub" target="_blank" rel="noopener noreferrer">GH</a>
-                        <a href="https://linkedin.com/in/jane-waithira" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">LI</a>
-                        <a href="https://twitter.com/" aria-label="Twitter" target="_blank" rel="noopener noreferrer">TW</a>
+                        <a href="https://www.linkedin.com/in/waithira-macharia/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">LI</a>
                     </SocialLinks>
                 </FooterSection>
 
@@ -163,9 +162,8 @@ function Footer() {
                 <FooterSection>
                     <h3>Contact Info</h3>
                     <ul>
-                        <li>+254 (0)721615405</li>
-                        <li>jane.waithira@example.com</li>
-                        <li>Nairobi, Kenya</li>
+                        <li>waithiramacharia285@gmail.com</li>
+                        <li>Walldorf, Germany</li>
                     </ul>
                 </FooterSection>
             </FooterContent>
