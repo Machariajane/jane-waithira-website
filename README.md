@@ -128,11 +128,11 @@ Your package.json should include:
 
 ```json
 {
-  "homepage": "https://yourusername.github.io/jane-waithira-website",
-  "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
-  }
+   "homepage": "https://yourusername.github.io/jane-waithira-website",
+   "scripts": {
+      "predeploy": "npm run build",
+      "deploy": "gh-pages -d build"
+   }
 }
 ```
 

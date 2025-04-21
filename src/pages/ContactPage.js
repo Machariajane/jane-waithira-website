@@ -232,13 +232,21 @@ function ContactPage() {
             setSubmitted(false);
         }, 5000);
     };
-
+    const Note = styled.p`
+      text-align: center;
+      margin-bottom: ${({ theme }) => theme.spacing.large};
+      color: ${({ theme }) => theme.colors.accent};
+      font-style: italic;
+    `;
     return (
         <PageContainer>
             <PageTitle>Get In Touch</PageTitle>
 
             <ContactLayout>
                 <ContactForm onSubmit={handleSubmit}>
+                    <Note>
+                        I haven’t gotten around to setting up the email service. Contact me directly via email for now!
+                    </Note>
                     <FormTitle>Send Me a Message</FormTitle>
 
                     {submitted && (

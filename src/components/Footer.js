@@ -34,50 +34,50 @@ const FooterContent = styled.div`
 `;
 
 const FooterSection = styled.div`
-  h3 {
-    font-family: ${({ theme }) => theme.fonts.heading};
-    color: ${({ theme }) => theme.colors.light};
-    margin-bottom: ${({ theme }) => theme.spacing.medium};
-    position: relative;
-    display: inline-block;
-    
-    &:after {
-      content: "";
-      display: block;
-      width: 40px;
-      height: 2px;
-      background-color: ${({ theme }) => theme.colors.secondary};
-      margin-top: ${({ theme }) => theme.spacing.small};
+    h3 {
+        font-family: ${({ theme }) => theme.fonts.heading};
+        color: ${({ theme }) => theme.colors.light};
+        margin-bottom: ${({ theme }) => theme.spacing.medium};
+        position: relative;
+        display: inline-block;
+
+        &:after {
+            content: "";
+            display: block;
+            width: 40px;
+            height: 2px;
+            background-color: ${({ theme }) => theme.colors.secondary};
+            margin-top: ${({ theme }) => theme.spacing.small};
+        }
     }
-  }
-  
-  p {
-    margin-bottom: ${({ theme }) => theme.spacing.medium};
-    font-size: 0.9rem;
-    line-height: 1.6;
-    opacity: 0.9;
-  }
-  
-  ul {
-    list-style: none;
-    
-    li {
-      margin-bottom: ${({ theme }) => theme.spacing.small};
+
+    p {
+        margin-bottom: ${({ theme }) => theme.spacing.medium};
+        font-size: 0.9rem;
+        line-height: 1.6;
+        opacity: 0.9;
     }
-    
-    a {
-      color: ${({ theme }) => theme.colors.light};
-      text-decoration: none;
-      transition: color 0.2s ease;
-      display: inline-block;
-      opacity: 0.9;
-      
-      &:hover {
-        color: ${({ theme }) => theme.colors.secondary};
-        transform: translateX(2px);
-      }
+
+    ul {
+        list-style: none;
+
+        li {
+            margin-bottom: ${({ theme }) => theme.spacing.small};
+        }
+
+        a {
+            color: ${({ theme }) => theme.colors.light};
+            text-decoration: none;
+            transition: color 0.2s ease;
+            display: inline-block;
+            opacity: 0.9;
+
+            &:hover {
+                color: ${({ theme }) => theme.colors.secondary};
+                transform: translateX(2px);
+            }
+        }
     }
-  }
 `;
 
 const SocialLinks = styled.div`
@@ -139,7 +139,7 @@ function Footer() {
                 <FooterSection>
                     <h3>About Me</h3>
                     <p>
-                        Data Scientist & ML Engineer with experience in creating Agentic Apps, real-time personalization engines,
+                        Data Scientist & ML Engineer with experience in creating real-time personalization engines,
                         sentiment analysis systems, and predictive models that drive business value.
                     </p>
                     <SocialLinks>
@@ -154,7 +154,9 @@ function Footer() {
                         <li><Link to="/">Home</Link></li>
                         <li><Link to="/experience">Experience</Link></li>
                         <li><Link to="/education">Education</Link></li>
-                        <li><Link to="/skills">Skills & Projects</Link></li>
+                        <li><Link to="/skills">Skills</Link></li>
+                        <li><Link to="/projects">Projects</Link></li>
+                        <li><Link to="/blog">Blog</Link></li>
                         <li><Link to="/contact">Contact</Link></li>
                     </ul>
                 </FooterSection>
