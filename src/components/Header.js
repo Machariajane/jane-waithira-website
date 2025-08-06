@@ -125,6 +125,7 @@ function Header() {
                         <li><Link to="/skills">Skills</Link></li>
                         <li><Link to="/projects">Projects</Link></li>
                         <li><Link to="/blog">Blog</Link></li>
+                        <li><Link to="/gallery">Gallery</Link></li>
                         <li><Link to="/contact">Contact</Link></li>
                     </ul>
                 </Navigation>

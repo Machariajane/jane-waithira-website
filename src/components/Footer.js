@@ -157,6 +157,7 @@ function Footer() {
                         <li><Link to="/skills">Skills</Link></li>
                         <li><Link to="/projects">Projects</Link></li>
                         <li><Link to="/blog">Blog</Link></li>
+                        <li><Link to="/gallery">Gallery</Link></li>
                         <li><Link to="/contact">Contact</Link></li>
                     </ul>
                 </FooterSection>
@@ -165,7 +166,7 @@ function Footer() {
                     <h3>Contact Info</h3>
                     <ul>
                         <li>waithiramacharia285@gmail.com</li>
-                        <li>Walldorf, Germany</li>
+                        <li>Berlin, Germany</li>
                     </ul>
                 </FooterSection>
             </FooterContent>

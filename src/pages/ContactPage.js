@@ -97,7 +97,7 @@ function ContactPage() {
                 </InfoItem>
                 <InfoItem>
                     <h3>Location</h3>
-                    <p>Walldorf, Germany</p>
+                    <p><p>Berlin, Germany</p></p>
                 </InfoItem>
                 <InfoItem>
                     <h3>Connect With Me</h3>

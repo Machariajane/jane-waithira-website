@@ -13,6 +13,7 @@ import SkillsPage from './pages/SkillsPage';
 import ProjectsPage from './pages/ProjectsPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
+import GalleryPage from './pages/GalleryPage';
 import ContactPage from './pages/ContactPage';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
                     <Route path="/projects" element={<ProjectsPage />} />
                     <Route path="/blog" element={<BlogPage />} />
                     <Route path="/blog/:id" element={<BlogPostPage />} />
+                    <Route path="/gallery" element={<GalleryPage />} />
                     <Route path="/contact" element={<ContactPage />} />
                 </Routes>
                 <Footer />
