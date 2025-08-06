@@ -237,9 +237,7 @@ function GalleryPage() {
 
             <PageDescription>
                 <p>
-                    Here are some moments that capture who I am beyond the data and code.
-                    From professional conferences to personal adventures, these photos tell the story
-                    of my journey in tech and life.
+                    Here are some moments that I have been captured in :))
                 </p>
             </PageDescription>
 
