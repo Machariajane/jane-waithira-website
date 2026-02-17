@@ -1,11 +1,3 @@
-<!-- 
-  BLOG POST TEMPLATE
-  
-  Note: Title, date, author, and tags are defined in blogPosts.js
-  This file only contains the article CONTENT (body text).
-  Just start writing your content below!
--->
-
 
 ## Introduction
 

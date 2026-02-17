@@ -9,6 +9,7 @@
 
 // Import markdown file URLs (CRA imports these as URLs)
 import buildingShopSmartUrl from './blogs/building-shopSmart.md';
+import mattermostDeploymentUrl from './blogs/mattermost-deployment.md';
 
 // Blog post metadata - ADD NEW POSTS HERE
 const blogPostsMeta = [
@@ -22,9 +23,17 @@ const blogPostsMeta = [
         tags: ["GenAI", "LangGraph", "Agents", "Python"],
         contentUrl: buildingShopSmartUrl,  // Will be fetched at runtime
     },
-    // ----------------------------------------------------------------
-    // ADD NEW BLOG POSTS BELOW - just copy this template:
-    // ----------------------------------------------------------------
+    {
+        id: "mattermost-deployment",
+        title: "Deploying Mattermost on Kubernetes: A Step-by-Step Guide",
+        date: "February 2026",
+        author: "Jane Waithira",
+        excerpt: "A comprehensive guide to deploying Mattermost, an open-source messaging platform, on a Kubernetes cluster using Helm charts.",
+        coverImage: "/images/blog/default.jpg",
+        tags: ["Kubernetes", "Mattermost", "Helm", "DevOps"],
+        contentUrl: mattermostDeploymentUrl,
+    },
+
     // {
     //     id: "my-new-post",                    // Must match filename: my-new-post.md
     //     title: "My New Blog Post Title",
