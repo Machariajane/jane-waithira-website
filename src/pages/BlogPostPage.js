@@ -1,5 +1,5 @@
 // src/pages/BlogPostPage.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import RomanDivider from '../components/RomanDivider';
@@ -184,10 +184,43 @@ const NotFoundContainer = styled.div`
     }
 `;
 
+const LoadingContainer = styled.div`
+    text-align: center;
+    padding: ${({ theme }) => theme.spacing.xlarge};
+    color: ${({ theme }) => theme.colors.text};
+    opacity: 0.7;
+`;
+
 function BlogPostPage() {
     const { id } = useParams();
+    const [content, setContent] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const post = blogPosts.find(post => post.id === id);
+
+    // Fetch markdown content from URL
+    useEffect(() => {
+        if (post?.contentUrl) {
+            setLoading(true);
+            fetch(post.contentUrl)
+                .then(response => response.text())
+                .then(text => {
+                    setContent(text);
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.error('Error loading blog content:', err);
+                    setContent('Error loading content.');
+                    setLoading(false);
+                });
+        } else if (post?.content) {
+            // Fallback for inline content (if any)
+            setContent(post.content);
+            setLoading(false);
+        } else {
+            setLoading(false);
+        }
+    }, [post]);
 
     if (!post) {
         return (
@@ -228,9 +261,13 @@ function BlogPostPage() {
                 )}
             </BlogHeader>
 
-            <BlogContent>
-                <ReactMarkdown>{post.content}</ReactMarkdown>
-            </BlogContent>
+            {loading ? (
+                <LoadingContainer>Loading article...</LoadingContainer>
+            ) : (
+                <BlogContent>
+                    <ReactMarkdown>{content}</ReactMarkdown>
+                </BlogContent>
+            )}
 
             <RomanDivider symbol="•" />
 
