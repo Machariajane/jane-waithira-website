@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/jane-waithira-website/static/css/main.e6c13ad2.css",
-    "main.js": "/jane-waithira-website/static/js/main.ea03673d.js",
+    "main.js": "/jane-waithira-website/static/js/main.b999a5b6.js",
     "static/js/453.13d5a1e0.chunk.js": "/jane-waithira-website/static/js/453.13d5a1e0.chunk.js",
+    "static/media/mattermost-deployment.md": "/jane-waithira-website/static/media/mattermost-deployment.6a50a6528123e67291da.md",
     "static/media/building-shopSmart.md": "/jane-waithira-website/static/media/building-shopSmart.0d7288b4fbd42f47f523.md",
-    "static/media/mattermost-deployment.md": "/jane-waithira-website/static/media/mattermost-deployment.f57701783d77eed02c5e.md",
     "index.html": "/jane-waithira-website/index.html",
     "main.e6c13ad2.css.map": "/jane-waithira-website/static/css/main.e6c13ad2.css.map",
-    "main.ea03673d.js.map": "/jane-waithira-website/static/js/main.ea03673d.js.map",
+    "main.b999a5b6.js.map": "/jane-waithira-website/static/js/main.b999a5b6.js.map",
     "453.13d5a1e0.chunk.js.map": "/jane-waithira-website/static/js/453.13d5a1e0.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.ea03673d.js"
+    "static/js/main.b999a5b6.js"
   ]
 }
