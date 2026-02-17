@@ -25,7 +25,7 @@ const blogPostsMeta = [
     },
     {
         id: "mattermost-deployment",
-        title: "Deploying Mattermost on Kubernetes: A Step-by-Step Guide",
+        title: "Deploying Mattermost on Kubernetes: A Complete Practical Guide",
         date: "February 2026",
         author: "Jane Waithira",
         excerpt: "A comprehensive guide to deploying Mattermost, an open-source messaging platform, on a Kubernetes cluster using Helm charts.",
