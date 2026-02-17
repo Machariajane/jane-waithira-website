@@ -1,10 +1,4 @@
-# Building shopSmart: A Conversational Shopping Agent with GenAI & LangGraph
-
-*By Jane Waithira • April 2025*
-
----
-
-## 🎯 The Problem --
+## 🎯 The Problem
 
 Online shopping across multiple marketplaces can be tedious:
 
