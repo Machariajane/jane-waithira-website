@@ -1,4 +1,4 @@
-## 🎯 The Problem
+## The Problem
 
 Online shopping across multiple marketplaces can be tedious:
 
@@ -10,7 +10,7 @@ Online shopping across multiple marketplaces can be tedious:
 
 ---
 
-## 🤖 How GenAI Helps
+## How GenAI Helps
 
 Generative AI (e.g. Google's Gemini) excels at:
 
@@ -22,7 +22,7 @@ By combining an LLM with a small toolkit of Python "@tool" functions, we get an 
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 1. **Tool Functions**  
    We define simple Python functions for:  
@@ -85,7 +85,7 @@ By combining an LLM with a small toolkit of Python "@tool" functions, we get an 
 
 ---
 
-## ⚙️ Example Interaction
+## Example Interaction
 
 ```
 You: Show me Adidas sneakers under $120 in size 9.
@@ -99,7 +99,7 @@ Behind the scenes, the model called `search_shoes`, parsed the JSON, and generat
 
 ---
 
-## ⚠️ Limitations
+## Limitations
 
 1. **Mock Data**  
    Right now we use static Python lists. Real‑world APIs will require authentication, rate limits, pagination, and error handling.
@@ -113,7 +113,7 @@ Behind the scenes, the model called `search_shoes`, parsed the JSON, and generat
 
 ---
 
-## 🚀 Future & Art‑of‑the‑Possible
+## Future & Art‑of‑the‑Possible
 
 - **Real‑Time Market Data**  
   Integrate Amazon's and eBay's official APIs, plus other retailers.
@@ -132,6 +132,6 @@ Behind the scenes, the model called `search_shoes`, parsed the JSON, and generat
 
 ---
 
-## 🎉 Conclusion
+## Conclusion
 
 We've shown how to combine a modern LLM (Gemini) with a small Python toolkit and LangGraph orchestration to build a multi‑step shopping agent. This pattern generalizes to many domains—anywhere you need conversational retrieval, filtering, and structured outputs.

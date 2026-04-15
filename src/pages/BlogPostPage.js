@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import RomanDivider from '../components/RomanDivider';
 import blogPosts from '../data/blogPosts';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeSlug from 'rehype-slug';
 
 const PageContainer = styled.div`
     max-width: 800px;
@@ -191,6 +193,39 @@ const LoadingContainer = styled.div`
     opacity: 0.7;
 `;
 
+const markdownComponents = {
+    a: ({ href, children, ...props }) => {
+        const isInPageAnchor = typeof href === 'string' && href.startsWith('#');
+        const isExternal = typeof href === 'string' && /^https?:\/\//i.test(href);
+
+        const handleClick = (event) => {
+            if (!isInPageAnchor) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const targetId = decodeURIComponent(href.slice(1));
+            const element = document.getElementById(targetId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        };
+
+        return (
+            <a
+                href={href}
+                onClick={handleClick}
+                target={isExternal ? '_blank' : undefined}
+                rel={isExternal ? 'noopener noreferrer' : undefined}
+                {...props}
+            >
+                {children}
+            </a>
+        );
+    },
+};
+
 function BlogPostPage() {
     const { id } = useParams();
     const [content, setContent] = useState('');
@@ -265,7 +300,13 @@ function BlogPostPage() {
                 <LoadingContainer>Loading article...</LoadingContainer>
             ) : (
                 <BlogContent>
-                    <ReactMarkdown>{content}</ReactMarkdown>
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        rehypePlugins={[rehypeSlug]}
+                        components={markdownComponents}
+                    >
+                        {content}
+                    </ReactMarkdown>
                 </BlogContent>
             )}
 
