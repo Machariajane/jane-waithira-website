@@ -13,9 +13,21 @@ import buildingShopSmartUrl from './blogs/building-shopSmart.md';
 import mattermostDeploymentUrl from './blogs/mattermost-deployment.md';
 import buildingQuotaBillingKubernetesOpenstackUrl from './blogs/building-quota-billing-kubernetes-openstack.md';
 import openstackDeploymentUrl from './blogs/openstack-deployment.md';
+import goInterfacesVsPythonUrl from './blogs/go-interfaces-vs-python-duck-typing.md';
 
 // Blog post metadata - ADD NEW POSTS HERE
 const blogPostsMeta = [
+    {
+        id: "go-interfaces-vs-python-duck-typing",
+        title: "Go Interfaces vs Python Duck Typing: A Side-by-Side Comparison",
+        date: "April 2026",
+        sortDate: "2026-04-15",
+        author: "Jane Waithira",
+        excerpt: "Coming from Python, Go's type system felt alien. This post maps Go interfaces, receivers, and struct literals to the Python concepts you already know — duck typing, self, and __init__.",
+        coverImage: "/images/blog/default.jpg",
+        tags: ["Go", "Python", "Interfaces", "Type Systems"],
+        contentUrl: goInterfacesVsPythonUrl,
+    },
     {
         id: "openstack-deployment",
         title: "Setting Up OpenStack DevStack on Apple Silicon: A Complete Learning Experience",
