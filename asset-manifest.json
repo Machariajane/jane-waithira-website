@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/jane-waithira-website/static/css/main.e6c13ad2.css",
-    "main.js": "/jane-waithira-website/static/js/main.6a60d581.js",
+    "main.js": "/jane-waithira-website/static/js/main.1b186fe5.js",
     "static/js/453.13d5a1e0.chunk.js": "/jane-waithira-website/static/js/453.13d5a1e0.chunk.js",
-    "static/media/building-quota-billing-kubernetes-openstack.md": "/jane-waithira-website/static/media/building-quota-billing-kubernetes-openstack.e99a0e9d1764fa28fa9e.md",
+    "static/media/building-quota-billing-kubernetes-openstack.md": "/jane-waithira-website/static/media/building-quota-billing-kubernetes-openstack.8fc6a28a2ed3c1b7001f.md",
     "static/media/mattermost-deployment.md": "/jane-waithira-website/static/media/mattermost-deployment.6a50a6528123e67291da.md",
     "static/media/openstack-deployment.md": "/jane-waithira-website/static/media/openstack-deployment.e85353260e6569442613.md",
     "static/media/go-interfaces-vs-python-duck-typing.md": "/jane-waithira-website/static/media/go-interfaces-vs-python-duck-typing.4008e7bdbb1b4d83ab8f.md",
     "static/media/building-shopSmart.md": "/jane-waithira-website/static/media/building-shopSmart.f1ee96a01bfc1211ddee.md",
     "index.html": "/jane-waithira-website/index.html",
     "main.e6c13ad2.css.map": "/jane-waithira-website/static/css/main.e6c13ad2.css.map",
-    "main.6a60d581.js.map": "/jane-waithira-website/static/js/main.6a60d581.js.map",
+    "main.1b186fe5.js.map": "/jane-waithira-website/static/js/main.1b186fe5.js.map",
     "453.13d5a1e0.chunk.js.map": "/jane-waithira-website/static/js/453.13d5a1e0.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.6a60d581.js"
+    "static/js/main.1b186fe5.js"
   ]
 }
