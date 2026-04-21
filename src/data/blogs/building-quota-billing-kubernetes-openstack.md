@@ -21,7 +21,10 @@ This is a deep-dive into everything I learned while adding per-project quota enf
 13. [The Full Discovery Chain: Seed -> Catalog -> Limes -> Your API](#the-full-discovery-chain)
 14. [Helm Deployment: Tying It All Together](#helm-deployment-tying-it-all-together)
 15. [REUSE Compliance: Licensing Auto-Generated Files](#reuse-compliance-licensing-auto-generated-files)
-16. [Key Takeaways](#key-takeaways)
+16. [Lessons from Code Review](#lessons-from-code-review)
+17. [Helm Config Pipeline: How Values Reach Your Code](#helm-config-pipeline-how-values-reach-your-code)
+18. [The Makefile Maker Pipeline](#the-makefile-maker-pipeline)
+19. [Key Takeaways](#key-takeaways)
 
 ---
 
@@ -695,6 +698,158 @@ The `reuse.toml` approach for generated files is the correct solution because co
 
 ---
 
+## Lessons from Code Review
+
+These are patterns and mistakes that came up during the PR review process. They are not specific to quota or billing — they are general Go and Kubernetes lessons that happen to have surfaced here.
+
+### Go Early Return Pattern
+
+Nested conditionals make Go code harder to follow. The convention is to use **guard clauses** — check the failure condition first and return early, keeping the happy path at the lowest indentation level.
+
+**Before (nested):**
+```go
+if m.quotaStorage != nil {
+    if err := m.quotaStorage.IncrementRate(...); err != nil {
+        logg.Error(...)
+    }
+    return ca, nil
+}
+return ca, nil
+```
+
+**After (early return):**
+```go
+if m.quotaStorage == nil {
+    return ca, nil
+}
+if err := m.quotaStorage.IncrementRate(...); err != nil {
+    logg.Error(...)
+}
+return ca, nil
+```
+
+This is a Go convention, not just style — it reduces cognitive nesting and makes the "what happens when everything is fine?" path obvious.
+
+### retry.RetryOnConflict vs Manual Retry Loop
+
+The initial implementation used a hand-rolled `for range 5` loop for handling `409 Conflict` on rate counter updates. The code review replaced it with `retry.RetryOnConflict(retry.DefaultRetry, ...)` from `client-go/util/retry`.
+
+**Why:** `DefaultRetry` provides 5 attempts with 10ms exponential backoff. The intent is self-documenting — anyone reading the code knows immediately what kind of retry this is. Hand-rolled loops require the reader to parse the logic to understand the behaviour.
+
+### Fail-Open with Logging
+
+When the quota subsystem encounters an error (e.g. cannot read the ProjectQuota CRD), the service should **not** block CA creation. Quota is a soft enforcement layer — if it is down, the platform still needs to function.
+
+**Before:** `return nil //nolint:nilerr` — errors silently swallowed, linter suppressed.
+
+**After:** `logg.Error("quota enforcement skipped: ..."); return nil` — still fail-open, but now operators see it in logs and can investigate.
+
+The principle: fail-open is a valid design choice, but **silent** failure is not. Always log when you skip an enforcement step.
+
+### TOCTOU Race in Quota Enforcement
+
+There is a time-of-check-to-time-of-use gap: `checkCACreation` reads current usage, then `CreateCertificateAuthority` creates the CA. Between those two calls, another request could slip through and exceed the quota.
+
+This is **accepted and documented** in the code because:
+- CA creation is low-frequency (not thousands per second)
+- Limes reconciles periodically, catching any overshoot
+- Distributed locking would add significant complexity for minimal benefit
+
+The lesson: not every race condition needs to be fixed. Document the trade-off, quantify the impact, and make a deliberate decision.
+
+### Label Filtering vs Client-Side Filtering
+
+**Before:** List all HSMIssuers in the namespace, loop through results checking `projectID` match.
+
+**After:** `ctrlclient.MatchingLabels{"project_id": projectID}` — server-side filter, then `len(issuerList.Items)`.
+
+**Why:** Pushes filtering to the Kubernetes API server (indexed lookup) instead of fetching everything and filtering in Go. This matters at scale — listing 10,000 issuers to find the 5 belonging to one project is wasteful. Also: controller-runtime does **not** auto-paginate — without `Limit`, the API server returns everything in one response.
+
+### Inlining Single-Use Types
+
+The original implementation had a separate `Enforcer` struct with an exported `CheckCACreation` method, used only inside `enforcingManager`. The review inlined it — the fields (`quotaStorage`, `usageCollector`, `enforcementEnabled`) moved directly into `enforcingManager`, and `checkCACreation` became a private method.
+
+**Principle:** If a type is only used in one place, inline it. Fewer files, fewer exports, less surface area to understand. You can always extract it later if reuse emerges.
+
+### Testing Strategy: Three Tiers
+
+| Tier | What | Backend | Needs cluster? |
+|------|------|---------|---------------|
+| **Unit** | Quota logic, enforcement, race safety | `MemoryStore` (in-memory maps) | No |
+| **Unit + fake K8s** | HTTP handlers, usage counting | `NewKubernetesFakeClient()` | No |
+| **E2E integration** | Full flow against real CRDs | `K8sCRDStore` + real K8s (Kind) | Yes |
+
+E2E tests are skipped with `go test -short`. Unit tests always run.
+
+**Why `MemoryStore` exists:** The fake K8s client does not know about custom CRDs (not in its scheme) and does not handle SSA `Patch(Apply)` correctly. An in-memory implementation that satisfies the same `QuotaStore` interface lets you test business logic without Kubernetes. The same pattern is used throughout the codebase: `FakeInMemoryManager` for PKI unit tests, real client for e2e.
+
+**`-race` flag:** `go test -race` enables Go's race detector — it instruments memory access at runtime to catch unsynchronized concurrent reads/writes. This is separate from logical race testing (like the TOCTOU gap above). Always run with `-race` in CI.
+
+---
+
+## Helm Config Pipeline: How Values Reach Your Code
+
+Understanding how a value in `values.yaml` ends up as a variable in your Go binary:
+
+```
+values.yaml          ->  template (configs.yaml)    ->  K8s ConfigMap      ->  Go reads env var
+-----------------       --------------------------     -----------------     -----------------
+quota:                  QUOTA_ENFORCEMENT_              injected as env       osext.GetenvBool(
+  enforcement_enabled:    ENABLED: "{{ .Values...}}"    var into pod            "QUOTA_...")
+  false
+```
+
+Each layer has a different job: `values.yaml` is the operator-facing config. The Helm template wires it into a ConfigMap. Kubernetes injects the ConfigMap as environment variables. Go reads env vars at startup. It looks like duplication but it is bridging between systems.
+
+### YAML Nesting Gotcha
+
+YAML is indentation-sensitive and does not warn you when nesting breaks:
+
+```yaml
+clavis_api:
+  image: something
+installCRDs: true       # <- root level — breaks the clavis_api block
+  quota:                # <- now orphaned, not under clavis_api
+    enforcement_enabled: false
+```
+
+`installCRDs` is at the root level, so everything after it is no longer a child of `clavis_api`. YAML parsers silently accept this. Validate your YAML structure with `helm template` or a linter before deploying.
+
+---
+
+## The Makefile Maker Pipeline
+
+In SAP Go projects, `go-makefile-maker` generates project boilerplate from a single config file:
+
+```
+Makefile.maker.yaml  ->  go-makefile-maker  ->  generates:
+(you edit this)          (the tool)              - Makefile
+                                                 - REUSE.toml
+                                                 - .github/ workflows
+                                                 - .goreleaser.yaml
+```
+
+REUSE annotations are defined in `Makefile.maker.yaml`:
+
+```yaml
+reuse:
+  annotations:
+    - path: "config/crd/bases/**/*"
+      copyrightOwners: ["SAP SE"]
+      licenseIdentifier: "Apache-2.0"
+    - path: "internal/quota/v1alpha1/zz_generated*"
+      copyrightOwners: ["SAP SE"]
+      licenseIdentifier: "Apache-2.0"
+```
+
+The tool reads these and generates `REUSE.toml`. You **don't edit `REUSE.toml` directly** — it is a generated file. To add coverage for a new file pattern, add it to `Makefile.maker.yaml` and re-run the tool.
+
+The generated `Makefile` includes targets like `make build`, `make test`, `make check` (lint + REUSE compliance). You don't edit it directly either.
+
+**Practical note:** If you cannot run `go-makefile-maker` locally (e.g. missing `go-licence-detector`), you can edit `Makefile.maker.yaml` and trust CI to regenerate. For immediate coverage, add inline SPDX headers to files you control (like CRD YAML) — this satisfies `reuse lint` without needing the tool.
+
+---
+
 ## Key Takeaways
 
 1. **CRDs are a legitimate storage backend** for simple data at Kubernetes-native scale. You do not always need a database — evaluate whether etcd's constraints (small objects, key-based access) match your use case.
@@ -716,6 +871,14 @@ The `reuse.toml` approach for generated files is the correct solution because co
 9. **RBAC is the most forgotten step** when adding CRDs. Always update the Helm RBAC template when adding a new resource type.
 
 10. **Document cross-repo dependencies explicitly** — if your service requires a change in another repo (like a Limes config update), make that impossible to miss: TODO comment in code, note in PR description, issue in the dependent repo.
+
+11. **Fail-open is valid; silent failure is not** — if you skip enforcement on error, log it. Operators need visibility into degraded behaviour.
+
+12. **Not every race condition needs fixing** — document the trade-off (TOCTOU gap), quantify the impact (low-frequency operations + periodic reconciliation), and make a deliberate decision.
+
+13. **Use standard retry helpers** — `retry.RetryOnConflict` from client-go is self-documenting and provides backoff. Hand-rolled loops require readers to reverse-engineer the intent.
+
+14. **Filter server-side, not client-side** — use `MatchingLabels` to push filtering to the API server instead of listing everything and looping in Go.
 
 ---
 
