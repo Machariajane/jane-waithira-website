@@ -214,6 +214,20 @@ function ProjectsPage() {
         }
     ];
 
+    const openSourceContributions = [
+        {
+            title: "JSON Structured Logging for Keystone Pod",
+            project: "sapcc/helm-charts (Apache 2.0)",
+            date: "May 2026",
+            details: [
+                "Added structured JSON logging support for all log sources in the Keystone pod (oslo.log Python, Apache access, Apache error)",
+                "Enabled OTel collector to parse log severity without grok pattern matching",
+                "Required understanding of mod_wsgi internals, oslo.log formatters, and Apache mod_log_config"
+            ],
+            prLink: "https://github.com/sapcc/helm-charts/pull/11505"
+        }
+    ];
+
     const awards = [
         {
             title: "Vodacom/Safaricom Big Data Conference",
@@ -326,11 +340,36 @@ function ProjectsPage() {
 
             <Divider />
 
+            <AwardSection>
+                <SectionTitle>Open Source Contributions</SectionTitle>
+                <AwardsList>
+                    {openSourceContributions.map((contrib, index) => (
+                        <AwardCard key={index}>
+                            <h3>{contrib.title}</h3>
+                            <h4>{contrib.project}</h4>
+                            <p>{contrib.date}</p>
+                            <ul>
+                                {contrib.details.map((detail, i) => (
+                                    <li key={i}>{detail}</li>
+                                ))}
+                            </ul>
+                            {contrib.prLink && (
+                                <a href={contrib.prLink} target="_blank" rel="noopener noreferrer"
+                                   style={{ fontSize: '0.9rem', color: '#2c5f2d' }}>
+                                    View Pull Request →
+                                </a>
+                            )}
+                        </AwardCard>
+                    ))}
+                </AwardsList>
+            </AwardSection>
+
+            <Divider />
+
             <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
                 <p>
-                    These projects and awards represent my commitment to applying data science and machine learning
-                    to solve real-world problems. Each project has contributed to my growth as a professional
-                    and has allowed me to develop a diverse skill set across different domains and technologies.
+                    These projects and contributions represent my commitment to applying software engineering
+                    to solve real-world problems — from data science to cloud infrastructure and open source.
                 </p>
             </div>
         </PageContainer>
