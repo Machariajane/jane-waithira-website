@@ -20,11 +20,11 @@ import agentGarageFieldGuideUrl from './blogs/agent-garage-field-guide.md';
 const blogPostsMeta = [
     {
         id: "agent-garage-field-guide",
-        title: "What I Learned Building the SAP Agent Garage Onboarding Agent",
+        title: "Building a Production Multi-Agent System on Google Cloud",
         date: "June 2026",
         sortDate: "2026-06-02",
         author: "Jane Waithira",
-        excerpt: "A personal field guide from shipping a production multi-agent system on Google Cloud — covering ADK, LiteLLM, RAG, SSE streaming, Joule integration, CI/CD, and observability.",
+        excerpt: "A deep-dive into shipping a multi-agent system with Vertex AI Agent Engine, Cloud Run, ADK, LiteLLM, RAG, SSE streaming, CI/CD, and observability — lessons from real production bugs and code reviews.",
         coverImage: "/images/blog/default.jpg",
         tags: ["AI Agents", "Google Cloud", "RAG", "CI/CD", "Python", "Observability"],
         contentUrl: agentGarageFieldGuideUrl,
