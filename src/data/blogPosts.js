@@ -14,9 +14,21 @@ import mattermostDeploymentUrl from './blogs/mattermost-deployment.md';
 import buildingQuotaBillingKubernetesOpenstackUrl from './blogs/building-quota-billing-kubernetes-openstack.md';
 import openstackDeploymentUrl from './blogs/openstack-deployment.md';
 import goInterfacesVsPythonUrl from './blogs/go-interfaces-vs-python-duck-typing.md';
+import agentGarageFieldGuideUrl from './blogs/agent-garage-field-guide.md';
 
 // Blog post metadata - ADD NEW POSTS HERE
 const blogPostsMeta = [
+    {
+        id: "agent-garage-field-guide",
+        title: "What I Learned Building the SAP Agent Garage Onboarding Agent",
+        date: "June 2026",
+        sortDate: "2026-06-02",
+        author: "Jane Waithira",
+        excerpt: "A personal field guide from shipping a production multi-agent system on Google Cloud — covering ADK, LiteLLM, RAG, SSE streaming, Joule integration, CI/CD, and observability.",
+        coverImage: "/images/blog/default.jpg",
+        tags: ["AI Agents", "Google Cloud", "RAG", "CI/CD", "Python", "Observability"],
+        contentUrl: agentGarageFieldGuideUrl,
+    },
     {
         id: "go-interfaces-vs-python-duck-typing",
         title: "Go Interfaces vs Python Duck Typing: A Side-by-Side Comparison",
