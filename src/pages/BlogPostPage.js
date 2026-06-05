@@ -171,6 +171,38 @@ const BlogContent = styled.article`
         background-color: rgba(0, 0, 0, 0.1);
         margin: ${({ theme }) => theme.spacing.xlarge} 0;
     }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: ${({ theme }) => theme.spacing.large};
+        font-size: 0.95rem;
+        overflow-x: auto;
+        display: block;
+    }
+
+    thead {
+        background-color: ${({ theme }) => theme.colors.dark};
+        color: ${({ theme }) => theme.colors.light};
+    }
+
+    th, td {
+        padding: 10px 14px;
+        text-align: left;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    th {
+        font-weight: 600;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.06);
+    }
 `;
 
 const NotFoundContainer = styled.div`
