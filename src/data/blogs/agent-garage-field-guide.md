@@ -1,6 +1,6 @@
 ## Introduction
 
-This is a deep-dive into everything I learned while building a production multi-agent system on Google Cloud — a reasoning agent deployed on Vertex AI Agent Engine, fronted by a FastAPI adapter on Cloud Run, with RAG, SSE streaming, enterprise chat integration, and full CI/CD.
+This is a deep-dive into everything I learned while building a production multi-agent system on Google Cloud — a reasoning agent deployed on Vertex AI Agent Engine, fronted by a FastAPI adapter on Cloud Run, integrated with SAP Joule, with RAG, SSE streaming, and full CI/CD.
 
 The project touched almost every layer of a modern AI application: agent orchestration frameworks, LLM provider abstraction, vector search, streaming protocols, secrets management, observability, and deployment pipelines. Each piece had its own lessons.
 
@@ -14,7 +14,7 @@ The project touched almost every layer of a modern AI application: agent orchest
 4. [Multi-Agent Orchestration: Root + Sub-Agents](#multi-agent-orchestration-root--sub-agents)
 5. [RAG: Retrieval-Augmented Generation in Practice](#rag-retrieval-augmented-generation-in-practice)
 6. [SSE Streaming and the A2A Protocol](#sse-streaming-and-the-a2a-protocol)
-7. [Enterprise Chat Integration: Capabilities and Routing](#enterprise-chat-integration-capabilities-and-routing)
+7. [SAP Joule Integration: Capabilities and Routing](#sap-joule-integration-capabilities-and-routing)
 8. [CI/CD with GitHub Actions](#cicd-with-github-actions)
 9. [Observability: OpenTelemetry, Cloud Logging, Cloud Trace](#observability-opentelemetry-cloud-logging-cloud-trace)
 10. [Secrets, Service Keys, and IAM Patterns](#secrets-service-keys-and-iam-patterns)
@@ -36,7 +36,7 @@ The system is a **multi-agent onboarding consultant** — it walks users through
 These endpoints are served by a **FastAPI Cloud Run service** (the adapter). Behind it, the actual reasoning happens in a **Vertex AI Agent Engine deployment** (the brain).
 
 ```
-[ Chat UI ]
+[ SAP Joule ]
     | JSON-RPC (A2A protocol)
     v
 [ Cloud Run: FastAPI adapter ]
@@ -61,7 +61,7 @@ Why not run everything in one service? Because Agent Engine and Cloud Run are go
 | Tool execution and state persistence | JWT validation and custom auth |
 | Deployment versioning | A2A protocol envelopes |
 
-Agent Engine has a fixed API — you cannot add custom routes to it. Cloud Run is stateless — it cannot maintain agent sessions across requests. So Agent Engine hosts the brain, Cloud Run hosts the mouth. The adapter calls `agent_engines.get(...).stream_query(...)` for each user turn.
+Agent Engine has a fixed API — you cannot add custom routes to it. Cloud Run is stateless — it cannot maintain agent sessions across requests. So Agent Engine hosts the brain, Cloud Run hosts the mouth. The adapter calls `agent_engines.get(...).stream_query(...)` for each user turn, and SAP Joule consumes the streaming response via the A2A protocol.
 
 ### The bigger picture
 
@@ -199,7 +199,7 @@ data: {"text": " world"}\n\n
 
 In FastAPI, this is implemented with `StreamingResponse` and an async generator. We use an `asyncio.Queue` between the agent's event loop (which produces events) and the SSE generator (which serialises and sends them). The queue also allows the generator to emit heartbeat pings during long LLM calls — keeping the connection alive and giving the user feedback.
 
-The **Agent-to-Agent (A2A) JSON-RPC protocol** defines the event structure that chat frontends expect:
+The **Agent-to-Agent (A2A) JSON-RPC protocol** defines the event structure that Joule and other chat frontends expect:
 
 | Event | Purpose |
 |---|---|
@@ -209,7 +209,7 @@ The **Agent-to-Agent (A2A) JSON-RPC protocol** defines the event structure that 
 
 Three bugs that shipped to production and how they were fixed:
 
-**1. Heartbeat text leaking into chat.** The heartbeat messages ("Still processing...") and real content both used the same `text` field. The frontend concatenated them. Fix: heartbeats use a separate event type with no `text` field; only real content chunks set `text`.
+**1. Heartbeat text leaking into chat.** The heartbeat messages ("Still processing...") and real content both used the same `text` field. Joule concatenated them. Fix: heartbeats use a separate event type with no `text` field; only real content chunks set `text`.
 
 **2. Empty response as silent failure.** If the agent emitted zero text parts (due to `max_tokens` truncation), the stream ended cleanly — 200 OK, connection closed normally. The user saw a spinner that never resolved. Fix: track a `text_emitted` boolean. At stream close, if it is still `False`, emit a fallback message explaining that the response was empty.
 
@@ -233,21 +233,21 @@ The `asyncio.Queue` pattern (producer/consumer with backpressure) is the standar
 
 ---
 
-## Enterprise Chat Integration: Capabilities and Routing
+## SAP Joule Integration: Capabilities and Routing
 
-To plug a custom agent into an enterprise chat platform, you publish a **capability** — a configuration bundle that tells the platform when to route user messages to your agent and how to call it.
+To plug a custom agent into SAP Joule (SAP's AI copilot embedded in S/4HANA, SuccessFactors, BTP, etc.), you publish a **capability** — a configuration bundle that tells Joule when to route user messages to your agent and how to call it.
 
 Routing works via semantic similarity:
 
-1. User types a message.
-2. The platform's **preselector** runs vector similarity over every registered scenario's `description` field.
-3. The top-scoring match wins — unless confidence is below a threshold, in which case the platform falls back to its built-in LLM ("Direct Response").
+1. User types a message in Joule.
+2. Joule's **preselector** runs vector similarity over every registered scenario's `description` field.
+3. The top-scoring match wins — unless confidence is below a threshold, in which case Joule falls back to its built-in LLM ("Direct Response").
 
 The consequence: if your scenario `description` does not cover phrases the user is likely to type, you lose the routing competition to Direct Response — which can hallucinate answers because it knows nothing about your actual agent.
 
-Two bugs that surfaced:
+Two bugs that surfaced in our Joule integration:
 
-**1. Hallucinated capabilities.** A user asked "does the system have something similar?" — this did not match our scenario description closely enough, so it routed to Direct Response, which fabricated agent names. Fix: explicitly include discovery phrases in the scenario description ("does it already have...", "is there an existing solution for...").
+**1. Hallucinated capabilities.** A user asked "does the system have something similar?" — this did not match our scenario description closely enough, so Joule routed to Direct Response, which fabricated agent names. Fix: explicitly include discovery phrases in the scenario description ("does it already have...", "is there an existing solution for...").
 
 **2. Config drift between source and deployed.** A scenario was renamed in the source repo but never re-deployed to the platform. Users were hitting the old scenario. Lesson: source-controlled config is the spec, but the **deployed** config is what users actually hit. Always verify what is live — not what is in git.
 
