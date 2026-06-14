@@ -32,23 +32,16 @@ const HeroImage = styled.div`
   height: 280px;
   border-radius: 50%;
   background-color: ${({ theme }) => theme.colors.accent};
-  background-image: url('/images/profile.jpg');
+  background-image: url('${process.env.PUBLIC_URL}/images/profile.jpg');
   background-size: cover;
   background-position: center;
   margin: ${({ theme }) => theme.spacing.xlarge} auto 0;
   border: 4px solid ${({ theme }) => theme.colors.light};
   box-shadow: ${({ theme }) => theme.shadows.medium};
-  
+
   @media (min-width: 768px) {
     margin: 0;
   }
-`;
-
-const Greeting = styled.p`
-  font-family: ${({ theme }) => theme.fonts.heading};
-  font-size: 1.2rem;
-  color: ${({ theme }) => theme.colors.secondary};
-  margin-bottom: ${({ theme }) => theme.spacing.small};
 `;
 
 const Name = styled.h1`
@@ -68,10 +61,18 @@ const Title = styled.h2`
   font-weight: 400;
 `;
 
-const Bio = styled.p`
-    font-size: 1.1rem;
-    line-height: 1.7;
+const Bio = styled.div`
     margin-bottom: ${({ theme }) => theme.spacing.large};
+
+    p {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: ${({ theme }) => theme.spacing.medium};
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
 `;
 
 const ButtonGroup = styled.div`
@@ -162,13 +163,21 @@ function HomePage() {
         <main>
             <HeroSection>
                 <HeroContent>
-                    <Greeting>Hello, I'm</Greeting>
                     <Name>Jane Waithira</Name>
                     <Title>Data Scientist & ML Engineer</Title>
                     <Bio>
-                        Passionate about leveraging data to build intelligent systems that solve real-world problems.
-                        With experience in real-time personalization, ML model deployment, and causal inference,
-                        I help organizations make data-driven decisions.
+                        <p>
+                            I love solving problems with data and I'm adamant about finding the simplest (often the most beautiful) solution that actually works.
+                        </p>
+                        <p>
+                            I'm an AI/ML Developer at SAP in Germany, where I build applied AI and GenAI for cloud infrastructure. Before that, I spent years in East Africa's telecom industry turning messy, high-volume data into systems that made real decisions: a reinforcement learning engine personalising offers for 5M+ customers, causal models that changed how we thought about revenue, GenAI systems that made sense of customer feedback at scale.
+                        </p>
+                        <p>
+                            What I've learned: the right solution isn't always the most sophisticated one. Sometimes it's an XGBoost model. Sometimes it's a well-written script. And sometimes, only sometimes :)), it's an LLM. The skill is knowing which layer fits where.
+                        </p>
+                        <p>
+                            I thrive on breaking complex problems into the right pieces, collaborating with teams who care about getting it right, and building AI that makes it to production.
+                        </p>
                     </Bio>
                     <ButtonGroup>
                         <Button to="/experience">View Experience</Button>

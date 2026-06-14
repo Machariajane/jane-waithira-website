@@ -256,7 +256,7 @@ function GalleryPage() {
             <PhotoGrid>
                 {filteredPhotos.map(photo => (
                     <PhotoCard key={photo.id} onClick={() => openModal(photo)}>
-                        <PhotoImage src={photo.src} alt={photo.alt} />
+                        <PhotoImage src={`${process.env.PUBLIC_URL}${photo.src}`} alt={photo.alt} />
                         <PhotoInfo>
                             <PhotoCategory>{photo.category}</PhotoCategory>
                             <PhotoTitle>{photo.title}</PhotoTitle>
@@ -285,7 +285,7 @@ function GalleryPage() {
                             </>
                         )}
 
-                        <ModalImage src={modalPhoto.src} alt={modalPhoto.alt} />
+                        <ModalImage src={`${process.env.PUBLIC_URL}${modalPhoto.src}`} alt={modalPhoto.alt} />
                         <ModalInfo>
                             <PhotoCategory>{modalPhoto.category}</PhotoCategory>
                             <PhotoTitle>{modalPhoto.title}</PhotoTitle>

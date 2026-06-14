@@ -125,7 +125,7 @@ function ExperiencePage() {
             title: "ML Engineer",
             company: "SAP SE",
             location: "Germany",
-            period: "February 2025 – September 2025",
+            period: "February 2025 to September 2025",
             description: [
                 "Integrating AI into the Field Services Management product under SCM."
             ]
@@ -134,7 +134,7 @@ function ExperiencePage() {
             title: "Data Scientist",
             company: "Safaricom PLC",
             location: "Kenya",
-            period: "November 2021 – present",
+            period: "November 2021 to present",
             description: [
                 "Leading a real-time personalization engine project recommending data offers to 5M+ customers. Tasks include constructing offer recommendation models, generating reports, and conducting experiments (e.g., using Q learning/MAB and running A/B tests to assess improvements from baseline models).",
                 "Used GenAI for topic modelling and sentiment analysis, integrating it into an end system that autonomously responds to customer feedback, thus improving the Net Promoter Score (NPS).",
@@ -150,7 +150,7 @@ function ExperiencePage() {
             title: "Data Science Intern",
             company: "Safaricom PLC",
             location: "Kenya",
-            period: "February 2021 – August 2021",
+            period: "February 2021 to August 2021",
             description: [
                 "Conducted in-depth analysis of network data for over 100,000 cells, focusing on identifying and mitigating lost opportunities resulting from cell congestion.",
                 "Analysed the impact of Fixed LTE products on cell utilisation and site revenue, fostering collaboration between the cellular network and fixed LTE teams.",
@@ -161,7 +161,7 @@ function ExperiencePage() {
             title: "Software Engineering Intern",
             company: "Mbitrix Technologies",
             location: "Kenya",
-            period: "July 2019 – October 2019",
+            period: "July 2019 to October 2019",
             description: [
                 "Contributed to the development of features for a hospital management system using the Laravel PHP framework coupled with Bootstrap CSS.",
                 "Ensured code quality by conducting rigorous unit tests and collaborated with a team of four members, utilising Trello to track progress.",

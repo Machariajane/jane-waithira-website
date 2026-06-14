@@ -6,7 +6,7 @@ Online shopping across multiple marketplaces can be tedious:
 - You have to jump between Amazon, eBay, and more to compare listings.  
 - Manually reading ratings, reviews, delivery estimates… it all adds up to decision fatigue.
 
-**Goal:** Let a generative AI–powered agent understand your natural‑language request and do the heavy lifting: search, filter, compare, and recommend—automatically.
+**Goal:** Let a generative AI-powered agent understand your natural‑language request and do the heavy lifting: search, filter, compare, and recommend-automatically.
 
 ---
 
@@ -91,7 +91,7 @@ By combining an LLM with a small toolkit of Python "@tool" functions, we get an 
 You: Show me Adidas sneakers under $120 in size 9.
 Agent: Searching for Adidas shoes under $120 in size 9…
 Agent: I found 3 matches on Amazon and 2 on eBay. Here's the top pick:   
-   • **Amazon – Adidas Ultraboost 21** ($110, 4.7★, 3‑day delivery)  
+   • **Amazon, Adidas Ultraboost 21** ($110, 4.7★, 3‑day delivery)  
 Would you like details or compare options?
 ```
 
@@ -134,4 +134,4 @@ Behind the scenes, the model called `search_shoes`, parsed the JSON, and generat
 
 ## Conclusion
 
-We've shown how to combine a modern LLM (Gemini) with a small Python toolkit and LangGraph orchestration to build a multi‑step shopping agent. This pattern generalizes to many domains—anywhere you need conversational retrieval, filtering, and structured outputs.
+We've shown how to combine a modern LLM (Gemini) with a small Python toolkit and LangGraph orchestration to build a multi‑step shopping agent. This pattern generalizes to many domains-anywhere you need conversational retrieval, filtering, and structured outputs.

@@ -1,6 +1,6 @@
 ## Introduction
 
-Coming from Python, Go's type system felt alien at first. But once you see how Go interfaces map to concepts you already know — duck typing, `self`, constructors — everything clicks. This post is a side-by-side comparison of the two languages, focused on interfaces, data storage, and method access.
+Coming from Python, Go's type system felt alien at first. But once you see how Go interfaces map to concepts you already know, duck typing, `self`, constructors, everything clicks. This post is a side-by-side comparison of the two languages, focused on interfaces, data storage, and method access.
 
 ---
 
@@ -19,26 +19,26 @@ Coming from Python, Go's type system felt alien at first. But once you see how G
 
 ## Go Interfaces vs Python Duck Typing
 
-**Python — Duck Typing:** "If it has a `.read()` method, just call it and hope for the best."
-- No contract declared — the function signature `def get_data(source)` tells you nothing
+**Python, Duck Typing:** "If it has a `.read()` method, just call it and hope for the best."
+- No contract declared, the function signature `def get_data(source)` tells you nothing
 - Errors caught at **runtime** (`AttributeError` when the method doesn't exist)
-- Python's fix (ABC) only enforces on the **class**, not the **caller** — `get_data(BrokenSource())` still runs
+- Python's fix (ABC) only enforces on the **class**, not the **caller**, `get_data(BrokenSource())` still runs
 
-**Go — Interfaces:** "If it has a `Read()` method, it satisfies `Reader` — and the compiler proves it."
-- Contract is explicit — `func GetData(source Reader)` tells you exactly what's needed
+**Go, Interfaces:** "If it has a `Read()` method, it satisfies `Reader`, and the compiler proves it."
+- Contract is explicit, `func GetData(source Reader)` tells you exactly what's needed
 - Errors caught at **compile time** (code won't build if the type doesn't fit)
-- No `implements` keyword — satisfaction is implicit, just like duck typing
+- No `implements` keyword, satisfaction is implicit, just like duck typing
 - Interfaces compose cleanly: `ReadCloser` = `Reader` + `Closer`
 
 **The `type` keyword does two things in Go:**
-- `type Database struct { ... }` — concrete thing with data (like a Python `class`)
-- `type Reader interface { ... }` — contract with no data (like a Python `ABC`, but enforced on both sides)
+- `type Database struct { ... }`, concrete thing with data (like a Python `class`)
+- `type Reader interface { ... }`, contract with no data (like a Python `ABC`, but enforced on both sides)
 
 ---
 
 ## Data Storage and Method Access: Python self vs Go Receivers
 
-### Python — self stores and accesses data
+### Python, self stores and accesses data
 
 ```python
 class Database:
@@ -55,7 +55,7 @@ class Database:
 
 db = Database("localhost", 5432)
 print(db.connect())   # "Connecting to localhost:5432"
-print(db.host)        # "localhost" — access fields directly, no enforcement
+print(db.host)        # "localhost", access fields directly, no enforcement
 db.host = 12345       # no error! you just put an int where a string should be
 db.oops = "anything"  # no error! you just invented a new field at runtime
 ```
@@ -68,7 +68,7 @@ db.oops = "anything"  # no error! you just invented a new field at runtime
 
 ---
 
-### Go — struct stores data, receiver accesses it
+### Go, struct stores data, receiver accesses it
 
 ```go
 type Database struct {
@@ -76,13 +76,13 @@ type Database struct {
     Port int
 }
 
-// (d Database) is the receiver — Go's version of self
-// This is a VALUE receiver — gets a COPY, can't modify original
+// (d Database) is the receiver, Go's version of self
+// This is a VALUE receiver, gets a COPY, can't modify original
 func (d Database) Connect() string {
     return fmt.Sprintf("Connecting to %s:%d", d.Host, d.Port)
 }
 
-// (d *Database) is a POINTER receiver — can modify the original
+// (d *Database) is a POINTER receiver, can modify the original
 func (d *Database) Close() string {
     d.Host = ""    // modifies the actual struct
     return "Closed"
@@ -101,7 +101,7 @@ db.Oops = "anything"       // COMPILE ERROR: db.Oops undefined (no such field)
 ## Creating Instances: Python __init__ vs Go Struct Literals
 
 ```python
-# Python — data goes through __init__ -> stored on self
+# Python, data goes through __init__ -> stored on self
 db = Database("localhost", 5432)
 #              |            |
 # def __init__(self, host, port):
@@ -110,7 +110,7 @@ db = Database("localhost", 5432)
 ```
 
 ```go
-// Go — data goes directly into the struct (no constructor needed)
+// Go, data goes directly into the struct (no constructor needed)
 db := Database{Host: "localhost", Port: 5432}
 //              |                  |
 // type Database struct {
@@ -119,22 +119,22 @@ db := Database{Host: "localhost", Port: 5432}
 // }
 ```
 
-Python **needs** `__init__` to wire up the data. Go **doesn't** — you fill struct fields directly by name.
+Python **needs** `__init__` to wire up the data. Go **doesn't**, you fill struct fields directly by name.
 
 ---
 
 ## The Receiver: Value vs Pointer
 
-This is something Python doesn't have — Go makes you choose:
+This is something Python doesn't have, Go makes you choose:
 
 ```go
-// VALUE receiver — gets a copy (like passing a photocopy)
+// VALUE receiver, gets a copy (like passing a photocopy)
 func (d Database) Connect() string {
     d.Host = "modified"   // only modifies the copy!
     return d.Host
 }
 
-// POINTER receiver — gets the original (like passing the actual document)
+// POINTER receiver, gets the original (like passing the actual document)
 func (d *Database) Reset() {
     d.Host = ""           // modifies the real struct
     d.Port = 0
@@ -142,7 +142,7 @@ func (d *Database) Reset() {
 ```
 
 ```python
-# Python — self is ALWAYS a reference (always pointer, no choice)
+# Python, self is ALWAYS a reference (always pointer, no choice)
 class Database:
     def connect(self):
         self.host = "modified"   # always modifies the original
@@ -158,9 +158,9 @@ class Database:
 
 ## Constructors: Python __init__ vs Go Convention
 
-### Python — Built-in Constructor (__init__)
+### Python, Built-in Constructor (__init__)
 
-`__init__` is a **magic method** — Python calls it automatically when you create an instance:
+`__init__` is a **magic method**, Python calls it automatically when you create an instance:
 
 ```python
 class Database:
@@ -171,10 +171,10 @@ class Database:
         if port < 0:
             raise ValueError("bad port")   # can validate
 
-db = Database("localhost", 5432)   # __init__ called for you — you never call it directly
+db = Database("localhost", 5432)   # __init__ called for you, you never call it directly
 ```
 
-### Go — No Constructors. Just a Function.
+### Go, No Constructors. Just a Function.
 
 Go has **zero magic**. There's no `__init__`, no special method. You either fill the struct directly:
 
@@ -192,12 +192,12 @@ func NewDatabase(host string, port int) *Database {
     return &Database{Host: host, Port: port} // & = return a pointer to the struct
 }
 
-db := NewDatabase("localhost", 0)   // you call it yourself — nothing automatic
+db := NewDatabase("localhost", 0)   // you call it yourself, nothing automatic
 // db.Host = "localhost"
 // db.Port = 5432 (defaulted)
 ```
 
-The `&` and `*Database` syntax is about pointers — covered in detail in [Memory, Pointers and References](#memory-pointers-and-references-python-vs-go) below.
+The `&` and `*Database` syntax is about pointers, covered in detail in [Memory, Pointers and References](#memory-pointers-and-references-python-vs-go) below.
 
 ### Side-by-Side
 
@@ -207,15 +207,15 @@ The `&` and `*Database` syntax is about pointers — covered in detail in [Memor
 | **Called when?** | Automatically on `Database(...)` | You call `NewDatabase(...)` yourself |
 | **Can validate?** | Yes (raise exception) | Yes (return error) |
 | **Can set defaults?** | Yes | Yes |
-| **Special syntax?** | Yes (`def __init__(self, ...)`) | No — it's just a normal function |
+| **Special syntax?** | Yes (`def __init__(self, ...)`) | No, it's just a normal function |
 
 ---
 
 ## Memory, Pointers and References: Python vs Go
 
-### First — What's Memory?
+### First, What's Memory?
 
-When you create a variable, it lives somewhere in your computer's RAM. That "somewhere" has an **address** — like a house address.
+When you create a variable, it lives somewhere in your computer's RAM. That "somewhere" has an **address**, like a house address.
 
 ```
 RAM (your computer's memory):
@@ -229,16 +229,16 @@ A **pointer** is just a variable that stores an address instead of data. It says
 
 ---
 
-### Python — You Never Think About This
+### Python, You Never Think About This
 
 Python hides all of this from you. **Everything is a reference (pointer) by default**:
 
 ```python
 db1 = Database("localhost", 5432)
-db2 = db1       # db2 points to the SAME object — not a copy
+db2 = db1       # db2 points to the SAME object, not a copy
 
 db2.port = 9999
-print(db1.port)  # 9999 — db1 changed too! both point to the same thing
+print(db1.port)  # 9999, db1 changed too! both point to the same thing
 
 # What's actually happening:
 # db1 ──→ ┌──────────────────┐
@@ -247,22 +247,22 @@ print(db1.port)  # 9999 — db1 changed too! both point to the same thing
 #          └──────────────────┘
 ```
 
-You never see addresses, never write `&` or `*`. Python manages it all behind the scenes. Since both variables point to the same address, both have access to the same data in memory — so either one can modify it.
+You never see addresses, never write `&` or `*`. Python manages it all behind the scenes. Since both variables point to the same address, both have access to the same data in memory, so either one can modify it.
 
 ---
 
-### Go — You Choose: Copy or Reference
+### Go, You Choose: Copy or Reference
 
 Go makes you **explicitly decide**:
 
-#### Option 1: Value (copy) — no `&`, no `*`
+#### Option 1: Value (copy), no `&`, no `*`
 
 ```go
 db1 := Database{Host: "localhost", Port: 5432}
-db2 := db1       // db2 gets a FULL COPY — separate object
+db2 := db1       // db2 gets a FULL COPY, separate object
 
 db2.Port = 9999
-fmt.Println(db1.Port)  // 5432 — db1 is unchanged! db2 is independent
+fmt.Println(db1.Port)  // 5432, db1 is unchanged! db2 is independent
 
 // What's happening:
 // db1 → ┌──────────────────┐
@@ -275,14 +275,14 @@ fmt.Println(db1.Port)  // 5432 — db1 is unchanged! db2 is independent
 //        └──────────────────┘
 ```
 
-#### Option 2: Pointer (reference) — use `&` and `*`
+#### Option 2: Pointer (reference), use `&` and `*`
 
 ```go
 db1 := &Database{Host: "localhost", Port: 5432}   // & = "give me the address"
-db2 := db1       // db2 gets the SAME address — points to same object
+db2 := db1       // db2 gets the SAME address, points to same object
 
 db2.Port = 9999
-fmt.Println(db1.Port)  // 9999 — db1 changed too! same as Python behavior
+fmt.Println(db1.Port)  // 9999, db1 changed too! same as Python behavior
 
 // What's happening (same as Python!):
 // db1 ──→ ┌──────────────────┐
@@ -293,12 +293,12 @@ fmt.Println(db1.Port)  // 9999 — db1 changed too! same as Python behavior
 
 ---
 
-### `&` vs `*` — They're Opposites, Not the Same Thing
+### `&` vs `*`, They're Opposites, Not the Same Thing
 
 | Symbol | What it does | Direction | Analogy |
 |--------|-------------|-----------|---------|
-| `&` | **Creates** a pointer — "give me the address of this thing" | data -> address | Writing down a house's address on a slip of paper |
-| `*` | **Follows** a pointer — "go to this address and get the data" | address -> data | Reading the slip of paper and going to the house |
+| `&` | **Creates** a pointer, "give me the address of this thing" | data -> address | Writing down a house's address on a slip of paper |
+| `*` | **Follows** a pointer, "go to this address and get the data" | address -> data | Reading the slip of paper and going to the house |
 
 ```go
 db := Database{Host: "localhost", Port: 5432}   // the actual house
@@ -322,14 +322,14 @@ func Reset(db *Database) {    // *Database = "I receive an address"
 
 myDB := &Database{Port: 5432} // & = create the address
 Reset(myDB)                   // pass the address
-// myDB.Port is now 0 — Reset got the address, modified the original
+// myDB.Port is now 0, Reset got the address, modified the original
 ```
 
 ---
 
 ### Why Use Pointers At All?
 
-**1. Sharing changes** — if a function gets a copy, its changes are thrown away:
+**1. Sharing changes**, if a function gets a copy, its changes are thrown away:
 
 ```go
 func ResetCopy(db Database) {    // gets a COPY
@@ -342,27 +342,27 @@ func ResetReal(db *Database) {   // gets the ADDRESS
 
 db := Database{Port: 5432}
 ResetCopy(db)
-fmt.Println(db.Port)   // 5432 — nothing happened! changes were on a copy
+fmt.Println(db.Port)   // 5432, nothing happened! changes were on a copy
 
 ResetReal(&db)
-fmt.Println(db.Port)   // 0 — this time it worked
+fmt.Println(db.Port)   // 0, this time it worked
 ```
 
-**2. Performance** — copying a 100-field struct every function call is wasteful. An address is always 8 bytes.
+**2. Performance**, copying a 100-field struct every function call is wasteful. An address is always 8 bytes.
 
-**3. Shared access** — multiple functions need to work on the **same** object:
+**3. Shared access**, multiple functions need to work on the **same** object:
 
 ```go
 db := &Database{Host: "localhost", Port: 5432}
 Reset(db)      // give address to Reset
 Backup(db)     // give address to Backup
 Log(db)        // give address to Log
-// all three work on the SAME database — like Python does by default
+// all three work on the SAME database, like Python does by default
 ```
 
 ---
 
-### The Three Symbols — Complete Picture
+### The Three Symbols, Complete Picture
 
 | Symbol | Name | Meaning | Example |
 |--------|------|---------|---------|
@@ -378,17 +378,17 @@ Think of it like a house:
 
 ---
 
-### Why This Matters — Back to NewDatabase
+### Why This Matters, Back to NewDatabase
 
 ```go
-// Returns *Database (a pointer) — caller gets the address
+// Returns *Database (a pointer), caller gets the address
 func NewDatabase(host string, port int) *Database {
     return &Database{Host: host, Port: port}
     //     ^ "create a Database, then give me its address"
 }
 
 db := NewDatabase("localhost", 5432)
-// db is a pointer (*Database) — like Python, you're working with the original
+// db is a pointer (*Database), like Python, you're working with the original
 ```
 
 If it returned `Database` (not `*Database`):
@@ -397,7 +397,7 @@ func NewDatabase(host string, port int) Database {
     return Database{Host: host, Port: port}
     // the ENTIRE struct gets copied to the caller
 }
-// For a small struct — fine. For a big struct — wasteful.
+// For a small struct, fine. For a big struct, wasteful.
 ```
 
 ---
@@ -413,7 +413,7 @@ func NewDatabase(host string, port int) Database {
 
 ---
 
-### Python vs Go Memory — Summary
+### Python vs Go Memory, Summary
 
 ```
 Python                                 Go
@@ -430,13 +430,13 @@ db2 = db1                             db2 := db1          <- COPY (value)
 #                                     They're OPPOSITES.
 ```
 
-**One-liner:** Python always passes references and hides memory from you. Go lets you choose — value (copy) or pointer (reference) — and makes you say it explicitly with `&` (get the address) and `*` (follow the address).
+**One-liner:** Python always passes references and hides memory from you. Go lets you choose, value (copy) or pointer (reference), and makes you say it explicitly with `&` (get the address) and `*` (follow the address).
 
 ---
 
 ## Functions: Python vs Go
 
-### Python — def
+### Python, def
 
 ```python
 # Simple function
@@ -459,7 +459,7 @@ greet("Jane")              # "Hello, Jane!"
 greet("Jane", "Hey")       # "Hey, Jane!"
 ```
 
-### Go — func
+### Go, func
 
 ```go
 // Simple function
@@ -477,12 +477,12 @@ func Divide(a, b float64) (float64, error) {
 
 result, err := Divide(10, 0)
 
-// NO default arguments in Go — you just pass everything explicitly
+// NO default arguments in Go, you just pass everything explicitly
 func Greet(name string, greeting string) string {
     return greeting + ", " + name + "!"
 }
 
-Greet("Jane", "Hello")     // must pass both — no defaults
+Greet("Jane", "Hello")     // must pass both, no defaults
 ```
 
 ### Key Differences
@@ -492,11 +492,11 @@ Greet("Jane", "Hello")     // must pass both — no defaults
 | **Keyword** | `def` | `func` |
 | **Types in signature?** | Optional (type hints) | Required |
 | **Multiple returns** | Tuple trick `return a, b` | Built-in `(int, error)` |
-| **Default arguments** | Yes `def f(x=5)` | No — pass everything |
+| **Default arguments** | Yes `def f(x=5)` | No, pass everything |
 | **Error handling** | `raise` / `try-except` | Return `error` as second value |
 | **First-class?** | Yes (functions are objects) | Yes (functions are values) |
 
-### Error Handling Pattern — This is Very Go
+### Error Handling Pattern, This is Very Go
 
 Python throws exceptions:
 ```python
@@ -506,7 +506,7 @@ except ZeroDivisionError as e:
     print(f"Error: {e}")
 ```
 
-Go returns errors explicitly — **every call site handles it**:
+Go returns errors explicitly, **every call site handles it**:
 ```go
 result, err := Divide(10, 0)
 if err != nil {
@@ -516,7 +516,7 @@ if err != nil {
 // safe to use result here
 ```
 
-This is why Go code is full of `if err != nil` — it's not boilerplate, it's **explicit error handling at every step**. No hidden exceptions, no surprise crashes.
+This is why Go code is full of `if err != nil`, it's not boilerplate, it's **explicit error handling at every step**. No hidden exceptions, no surprise crashes.
 
 ---
 
@@ -556,7 +556,7 @@ if err:                                 if err != nil {
     print(err)                              fmt.Println(err)
                                         }
 
-def greet(name, greeting="Hello"):      // No defaults in Go — pass everything
+def greet(name, greeting="Hello"):      // No defaults in Go, pass everything
     ...                                 func Greet(name, greeting string) string { ... }
 
 db2 = db1  <- always a reference        db2 := db1   <- COPY (value type)

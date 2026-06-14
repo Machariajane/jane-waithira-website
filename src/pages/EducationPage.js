@@ -158,7 +158,7 @@ function EducationPage() {
             degree: "BSc. Telecommunications and Information Engineering",
             school: "Jomo Kenyatta University of Agriculture and Technology (JKUAT)",
             location: "Kenya",
-            period: "September 2016 – December 2021",
+            period: "September 2016 to December 2021",
             highlights: [
                 "Graduated with First Class Honors",
                 "Final year project: Real-time Data on Library Occupancy System"
@@ -179,7 +179,7 @@ function EducationPage() {
         {
             title: "Introduction to Machine Learning with TensorFlow",
             institution: "Udacity",
-            period: "March 2023 – present",
+            period: "March 2023 to present",
             topics: [
                 "Supervised learning (Linear Regression, Perceptron Algorithm, Decision Trees, Naive Bayes, SVM, Ensemble Methods)",
                 "Deep learning (Neural Networks, Gradient Descent, Deep Learning with TensorFlow, Training, and Tuning)",
@@ -189,7 +189,7 @@ function EducationPage() {
         {
             title: "Data Analyst Nanodegree",
             institution: "Udacity",
-            period: "March 2022 – September 2022",
+            period: "March 2022 to September 2022",
             topics: [
                 "Data analysis process (questioning, wrangling, exploring, analysing, and communicating data using Python)",
                 "Applied inferential statistics and probability to real-world scenarios",

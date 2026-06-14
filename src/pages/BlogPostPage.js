@@ -229,6 +229,7 @@ const markdownComponents = {
     a: ({ href, children, ...props }) => {
         const isInPageAnchor = typeof href === 'string' && href.startsWith('#');
         const isExternal = typeof href === 'string' && /^https?:\/\//i.test(href);
+        const isInternalRoute = typeof href === 'string' && href.startsWith('/') && !href.startsWith('//');
 
         const handleClick = (event) => {
             if (!isInPageAnchor) {
@@ -244,6 +245,17 @@ const markdownComponents = {
             }
         };
 
+        // Internal app routes (/blog/foo, /projects, ...) need React Router's <Link>
+        // so HashRouter rewrites them to /#/blog/foo. Plain <a href="/blog/foo">
+        // would 404 because there is no real file at that path.
+        if (isInternalRoute) {
+            return (
+                <Link to={href} {...props}>
+                    {children}
+                </Link>
+            );
+        }
+
         return (
             <a
                 href={href}
@@ -255,6 +267,15 @@ const markdownComponents = {
                 {children}
             </a>
         );
+    },
+    // Markdown image refs like /images/blog/k8s/foo.jpg need PUBLIC_URL prepended
+    // so they resolve to /jane-waithira-website/images/... when the app is hosted
+    // under a base path (gh-pages, dev server with `homepage` set in package.json).
+    img: ({ src, alt, ...props }) => {
+        const resolvedSrc = typeof src === 'string' && src.startsWith('/') && !src.startsWith('//')
+            ? `${process.env.PUBLIC_URL}${src}`
+            : src;
+        return <img src={resolvedSrc} alt={alt} {...props} />;
     },
 };
 
@@ -324,7 +345,7 @@ function BlogPostPage() {
                 </TagsContainer>
 
                 {post.coverImage && (
-                    <FeaturedImage image={post.coverImage} />
+                    <FeaturedImage image={`${process.env.PUBLIC_URL}${post.coverImage}`} />
                 )}
             </BlogHeader>
 

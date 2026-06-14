@@ -369,7 +369,7 @@ function ProjectsPage() {
             <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
                 <p>
                     These projects and contributions represent my commitment to applying software engineering
-                    to solve real-world problems — from data science to cloud infrastructure and open source.
+                    to solve real-world problems, from data science to cloud infrastructure and open source.
                 </p>
             </div>
         </PageContainer>

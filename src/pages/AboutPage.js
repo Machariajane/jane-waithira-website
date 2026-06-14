@@ -40,7 +40,7 @@ const ProfileImage = styled.div`
     height: 200px;
     border-radius: 50%;
     background-color: ${({ theme }) => theme.colors.accent};
-    background-image: url('/images/author.jpg');
+    background-image: url('${process.env.PUBLIC_URL}/images/author.jpg');
     background-size: cover;
     margin-bottom: ${({ theme }) => theme.spacing.large};
     border: 4px solid ${({ theme }) => theme.colors.secondary};
