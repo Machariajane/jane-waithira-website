@@ -35,9 +35,9 @@ The service is a Private Certificate Authority (PCA) API. It lets OpenStack proj
 But we had no answer to: *"How many CAs can a project create? How do we bill for certificate issuance?"*
 
 We needed:
-- **Per-project quota enforcement** — limit CA instances per project
-- **Rate counting for billing** — track CA creations, intermediate CA signings, and end-entity cert issuances
-- **Limes integration** — expose all of this via the LIQUID protocol so Limes (the cloud's quota/billing system) can manage it
+- **Per-project quota enforcement**, limit CA instances per project
+- **Rate counting for billing**, track CA creations, intermediate CA signings, and end-entity cert issuances
+- **Limes integration**, expose all of this via the LIQUID protocol so Limes (the cloud's quota/billing system) can manage it
 
 This required touching almost every layer of the stack: Go type definitions, Kubernetes CRDs, RBAC, Helm charts, Keystone catalog registration, and a new HTTP API protocol. Each piece had its own lessons.
 
@@ -45,16 +45,16 @@ This required touching almost every layer of the stack: Go type definitions, Kub
 
 ## Designing the CRD: Why Not Just Use a Database?
 
-The service already runs on Kubernetes and stores everything as Kubernetes resources — cert-manager `CertificateRequest` objects and custom issuer CRDs. We had two choices for storing quota data:
+The service already runs on Kubernetes and stores everything as Kubernetes resources, cert-manager `CertificateRequest` objects and custom issuer CRDs. We had two choices for storing quota data:
 
 1. **External database** (PostgreSQL, etc.)
 2. **Kubernetes Custom Resource Definition (CRD)** stored in etcd
 
 We chose a CRD because:
-- **No new infrastructure** — no database to provision, back up, or manage
-- **Consistency** — same storage model as everything else in the service
-- **Native tooling** — `kubectl get projectquotas` just works
-- **Simplicity** — for our scale (one quota record per project, not millions of rows), etcd is perfectly adequate
+- **No new infrastructure**, no database to provision, back up, or manage
+- **Consistency**, same storage model as everything else in the service
+- **Native tooling**, `kubectl get projectquotas` just works
+- **Simplicity**, for our scale (one quota record per project, not millions of rows), etcd is perfectly adequate
 
 The result is a simple `ProjectQuota` CRD:
 
@@ -76,7 +76,7 @@ One CR per project. Quotas and rates are stored as maps. This single object is t
 
 ### The bigger picture
 
-CRDs are a first-class extension mechanism in Kubernetes. The API server treats them identically to built-in resources — you get RBAC, watches, listing, server-side filtering, and etcd durability for free. This is why many Kubernetes-native tools (cert-manager, Prometheus Operator, Crossplane) use CRDs as their persistence layer.
+CRDs are a first-class extension mechanism in Kubernetes. The API server treats them identically to built-in resources, you get RBAC, watches, listing, server-side filtering, and etcd durability for free. This is why many Kubernetes-native tools (cert-manager, Prometheus Operator, Crossplane) use CRDs as their persistence layer.
 
 The question of "CRD vs database" comes down to **scale and query patterns**. etcd is optimised for small objects (< 1 MB each) and key-based lookups, not analytical queries or high write throughput. For a quota store with one record per project and simple reads/writes, it is the right choice. For a logging pipeline processing millions of events, it is not.
 
@@ -105,13 +105,13 @@ Marker comments on the struct control what ends up in the generated CRD:
 // +kubebuilder:printcolumn:name="CA Quota",type="integer",JSONPath=".spec.quotas.ca_instances"
 ```
 
-The generated file `zz_generated.deepcopy.go` contains the `DeepCopyObject()` method required by the Kubernetes runtime. The `zz_` prefix is a convention meaning "generated — do not edit". Both files must be committed to git so the repo builds without running code generation.
+The generated file `zz_generated.deepcopy.go` contains the `DeepCopyObject()` method required by the Kubernetes runtime. The `zz_` prefix is a convention meaning "generated, do not edit". Both files must be committed to git so the repo builds without running code generation.
 
-**Key lesson**: The generated YAML and deepcopy files will be overwritten every time you run `controller-gen`. Never add inline headers to them and never hand-edit them — regenerate instead.
+**Key lesson**: The generated YAML and deepcopy files will be overwritten every time you run `controller-gen`. Never add inline headers to them and never hand-edit them, regenerate instead.
 
 ### The bigger picture
 
-`controller-gen` is part of the [controller-tools](https://github.com/kubernetes-sigs/controller-tools) project. The marker comment approach (specially-formatted Go comments that drive code generation) is a common pattern in the Go ecosystem — you also see it in `go:generate`, `mockgen`, and `stringer`. The idea is to keep the source of truth in one place (the Go type) and derive everything else from it.
+`controller-gen` is part of the [controller-tools](https://github.com/kubernetes-sigs/controller-tools) project. The marker comment approach (specially-formatted Go comments that drive code generation) is a common pattern in the Go ecosystem, you also see it in `go:generate`, `mockgen`, and `stringer`. The idea is to keep the source of truth in one place (the Go type) and derive everything else from it.
 
 The `zz_generated.deepcopy.go` file exists because Go interfaces require explicit deep-copy implementations, unlike languages with reflection-based copy. Kubernetes uses deep copy extensively to prevent accidental mutation of cached objects.
 
@@ -141,9 +141,9 @@ type ProjectQuotaSpec struct {
 ```
 
 We chose maps because:
-- **Extensibility** — adding a new quota or rate type does not require a CRD schema change or migration
-- **LIQUID compatibility** — the LIQUID protocol represents resources and rates as maps, so the data model maps directly
-- **Server-Side Apply field ownership** — SSA tracks individual map keys as owned fields (see next section), so independent writers can update different keys without conflicting
+- **Extensibility**, adding a new quota or rate type does not require a CRD schema change or migration
+- **LIQUID compatibility**, the LIQUID protocol represents resources and rates as maps, so the data model maps directly
+- **Server-Side Apply field ownership**, SSA tracks individual map keys as owned fields (see next section), so independent writers can update different keys without conflicting
 
 **Trade-off**: Maps sacrifice compile-time type safety. We mitigate this with typed constants:
 
@@ -170,9 +170,9 @@ func convertToTypedKeys[K ~string, V any](m map[string]V) map[K]V {
 
 ### The code review debate
 
-This was genuinely debated in our PR review. The concern raised was that maps in CRDs are "not always recommended" — the reasoning being that flat fields allow per-field conflict resolution via SSA and that a map could grow unbounded.
+This was genuinely debated in our PR review. The concern raised was that maps in CRDs are "not always recommended", the reasoning being that flat fields allow per-field conflict resolution via SSA and that a map could grow unbounded.
 
-Our counter-argument: in our case there is only **one field owner** (our service). Limes never directly writes to the CRD — it calls our HTTP API and we write to the CRD. So there are no ownership conflicts to resolve. The resource set is also bounded (we know exactly what we bill for). And SSA already tracks map keys as individual managed fields.
+Our counter-argument: in our case there is only **one field owner** (our service). Limes never directly writes to the CRD, it calls our HTTP API and we write to the CRD. So there are no ownership conflicts to resolve. The resource set is also bounded (we know exactly what we bill for). And SSA already tracks map keys as individual managed fields.
 
 **Lesson**: Don't apply a rule cargo-cult style. Understand *why* the rule exists and evaluate whether that reason actually applies to your situation.
 
@@ -182,7 +182,7 @@ The flat-vs-map debate is really a specialisation of schema design trade-offs yo
 
 In Kubernetes CRDs, the additional dimension is that the schema is enforced by the API server via OpenAPI validation. Maps with `additionalProperties` pass any key through; flat fields are explicitly enumerated in the schema.
 
-**To learn more**: [Kubernetes API conventions — maps](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md), [KEP-555 SSA maps and structs](https://github.com/kubernetes/enhancements/tree/master/keps/sig-api-machinery/555-server-side-apply#maps-and-structs)
+**To learn more**: [Kubernetes API conventions, maps](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md), [KEP-555 SSA maps and structs](https://github.com/kubernetes/enhancements/tree/master/keps/sig-api-machinery/555-server-side-apply#maps-and-structs)
 
 ---
 
@@ -195,16 +195,16 @@ This was one of the biggest learning moments. We have **two different write path
 | **Limes** (via our LIQUID API) | `quotas` map | When an admin sets a project quota |
 | **Our service** (internally) | `rates` map | On every CA creation / cert issuance |
 
-With a traditional `Update`, the last writer wins — Limes setting a quota would overwrite rate counters, and vice versa, because `Update` replaces the **entire object**.
+With a traditional `Update`, the last writer wins, Limes setting a quota would overwrite rate counters, and vice versa, because `Update` replaces the **entire object**.
 
 **Server-Side Apply (SSA)** solves this with **field-level ownership**:
 
 ```go
-// SetProjectQuota uses SSA — Limes (via our API) writes quotas, we own rates separately
+// SetProjectQuota uses SSA, Limes (via our API) writes quotas, we own rates separately
 err := s.client.Patch(ctx, pq, ctrlclient.Apply, fieldOwner, ctrlclient.ForceOwnership)
 ```
 
-With SSA, the API server tracks which field manager owns which fields. A manager only touches the fields it declares — other fields are left untouched.
+With SSA, the API server tracks which field manager owns which fields. A manager only touches the fields it declares, other fields are left untouched.
 
 ### The `ForceOwnership` flag
 
@@ -214,14 +214,14 @@ With SSA, the API server tracks which field manager owns which fields. A manager
 
 SSA has a subtle but critical limitation: **it ignores `ResourceVersion`**. This means it cannot perform optimistic concurrency control.
 
-For rate counters that are incremented concurrently (multiple cert issuances happening simultaneously), you need atomic read-modify-write. If two goroutines both read `counter=5` and both SSA-write `counter=6`, you get `6` instead of `7` — a silently dropped increment.
+For rate counters that are incremented concurrently (multiple cert issuances happening simultaneously), you need atomic read-modify-write. If two goroutines both read `counter=5` and both SSA-write `counter=6`, you get `6` instead of `7`, a silently dropped increment.
 
 The original code had this exact bug:
 ```go
-// BUG: SSA ignores ResourceVersion — the retry loop is dead code
+// BUG: SSA ignores ResourceVersion, the retry loop is dead code
 pq.ObjectMeta.ResourceVersion = existingPQ.ResourceVersion  // SSA ignores this
 client.Patch(ctx, pq, ctrlclient.Apply, fieldOwner, ctrlclient.ForceOwnership)
-// ForceOwnership means IsConflict can never be returned — the loop never retries
+// ForceOwnership means IsConflict can never be returned, the loop never retries
 ```
 
 The fix is `Get` + `Update` with a retry loop:
@@ -236,7 +236,7 @@ func (s *K8sCRDStore) IncrementRate(ctx context.Context, projectID string, rateN
 
         err := s.client.Update(ctx, &pq) // fails with 409 if ResourceVersion changed
         if apierrors.IsConflict(err) {
-            continue // someone else updated — re-read and retry
+            continue // someone else updated, re-read and retry
         }
         return err
     }
@@ -255,7 +255,7 @@ func (s *K8sCRDStore) IncrementRate(ctx context.Context, projectID string, rateN
 
 SSA was introduced in Kubernetes 1.18 to solve the "last-write-wins" problem that affected multi-controller scenarios. Before SSA, the typical workaround was strategic merge patches, which had confusing semantics around list merging and deletions.
 
-SSA is conceptually similar to the `If-Match` header in HTTP (optimistic concurrency via ETags), or CAS (compare-and-swap) operations in databases. The key insight is that field ownership is tracked server-side — the client doesn't need to coordinate with other clients directly.
+SSA is conceptually similar to the `If-Match` header in HTTP (optimistic concurrency via ETags), or CAS (compare-and-swap) operations in databases. The key insight is that field ownership is tracked server-side, the client doesn't need to coordinate with other clients directly.
 
 The `ResourceVersion`-based `Update` approach is the older, simpler pattern and still the right choice for read-modify-write operations where you need the current value to compute the new one.
 
@@ -265,7 +265,7 @@ The `ResourceVersion`-based `Update` approach is the older, simpler pattern and 
 
 ## ResourceVersion and Optimistic Concurrency Control
 
-Every Kubernetes object has a `metadata.resourceVersion` — an opaque string (backed by the etcd revision number) that changes on every write:
+Every Kubernetes object has a `metadata.resourceVersion`, an opaque string (backed by the etcd revision number) that changes on every write:
 
 ```yaml
 metadata:
@@ -283,13 +283,13 @@ This is the Kubernetes equivalent of compare-and-swap (CAS) or an SQL `UPDATE ..
 
 ### Important difference from SSA
 
-`Patch` with `ctrlclient.Apply` (SSA) does **not** use `resourceVersion` for conflict detection — it merges fields based on ownership declarations. This is intentional: SSA is designed for idempotent "desired state" management, not transactional increments.
+`Patch` with `ctrlclient.Apply` (SSA) does **not** use `resourceVersion` for conflict detection, it merges fields based on ownership declarations. This is intentional: SSA is designed for idempotent "desired state" management, not transactional increments.
 
 ### The bigger picture
 
 Optimistic concurrency control (OCC) is the alternative to pessimistic locking. Instead of acquiring a lock before modifying data, you read the current version, make your change, and check that nobody else modified it before you write back. If there is a conflict you retry.
 
-OCC works well when conflicts are rare (low contention), which is true for per-project quota records — most requests touch different projects. It performs poorly under high contention because retries accumulate. For a heavily contended counter you would use a different approach (e.g. a dedicated counter service, Lua scripts in Redis, or `UPDATE ... SET counter = counter + 1` in a database).
+OCC works well when conflicts are rare (low contention), which is true for per-project quota records, most requests touch different projects. It performs poorly under high contention because retries accumulate. For a heavily contended counter you would use a different approach (e.g. a dedicated counter service, Lua scripts in Redis, or `UPDATE ... SET counter = counter + 1` in a database).
 
 etcd itself uses a similar mechanism: every key has a `modRevision` and you can use `txn` operations to do compare-and-swap at the etcd level. Kubernetes `resourceVersion` is a projection of this.
 
@@ -299,7 +299,7 @@ etcd itself uses a similar mechanism: every key has a `modRevision` and you can 
 
 ## Kubernetes RBAC for CRDs
 
-When you create a CRD, your pod's ServiceAccount needs explicit RBAC permissions to interact with it. Kubernetes does not grant access to new resource types automatically — you add rules to a `ClusterRole` or `Role`:
+When you create a CRD, your pod's ServiceAccount needs explicit RBAC permissions to interact with it. Kubernetes does not grant access to new resource types automatically, you add rules to a `ClusterRole` or `Role`:
 
 ```yaml
 # helm-charts/my-service/templates/rbac.yaml
@@ -315,8 +315,8 @@ rules:
 ```
 
 **Key details**:
-- `patch` is required for SSA — Server-Side Apply uses `PATCH`, not `PUT`
-- `update` is required for traditional `Update` — it sends `PUT`
+- `patch` is required for SSA, Server-Side Apply uses `PATCH`, not `PUT`
+- `update` is required for traditional `Update`, it sends `PUT`
 - The resource name is the **plural lowercase** of the CRD kind (`ProjectQuota` → `projectquotas`)
 - The API group matches the `group` in `groupversion_info.go` (e.g. `myapp.example.com`)
 
@@ -327,11 +327,11 @@ projectquotas.myapp.example.com is forbidden: User "system:serviceaccount:defaul
 
 ### The bigger picture
 
-Kubernetes RBAC (Role-Based Access Control) is the authorisation layer for the Kubernetes API. Every request — whether from a human `kubectl` user or a pod's ServiceAccount — is evaluated against RBAC rules before being processed.
+Kubernetes RBAC (Role-Based Access Control) is the authorisation layer for the Kubernetes API. Every request, whether from a human `kubectl` user or a pod's ServiceAccount, is evaluated against RBAC rules before being processed.
 
 RBAC has four objects:
-- `Role` / `ClusterRole` — defines a set of permissions (verbs on resources)
-- `RoleBinding` / `ClusterRoleBinding` — binds a role to a subject (user, group, or ServiceAccount)
+- `Role` / `ClusterRole`, defines a set of permissions (verbs on resources)
+- `RoleBinding` / `ClusterRoleBinding`, binds a role to a subject (user, group, or ServiceAccount)
 
 The `Cluster` prefix means cluster-scoped (across all namespaces). Namespace-scoped roles only grant access within a single namespace.
 
@@ -343,10 +343,10 @@ For production services, principle of least privilege applies: only grant the sp
 
 ## Registering Custom Types with the K8s Client
 
-Before the controller-runtime client can read or write your CRD, it needs to know how to serialise and deserialise it. This happens via **scheme registration** — you register your Go types with the runtime scheme:
+Before the controller-runtime client can read or write your CRD, it needs to know how to serialise and deserialise it. This happens via **scheme registration**, you register your Go types with the runtime scheme:
 
 ```go
-// In main.go — called after creating the base client
+// In main.go, called after creating the base client
 must.Succeed(quota.RegisterScheme(client.Scheme()))
 ```
 
@@ -364,7 +364,7 @@ If you forget this, you get a runtime error:
 no kind is registered for the type v1alpha1.ProjectQuota in scheme
 ```
 
-**Pattern**: Keep scheme registration modular — each package registers its own types, and `main.go` calls each function. This avoids import cycles (the `pki` package doesn't need to import `quota/v1alpha1`) and makes it clear which types are in play.
+**Pattern**: Keep scheme registration modular, each package registers its own types, and `main.go` calls each function. This avoids import cycles (the `pki` package doesn't need to import `quota/v1alpha1`) and makes it clear which types are in play.
 
 ### The bigger picture
 
@@ -372,7 +372,7 @@ The Kubernetes runtime `Scheme` is a registry that maps between Go types and the
 
 This is a specific application of the [type registry pattern](https://martinfowler.com/bliki/PluginArchitecture.html). In Go, because there is no runtime type metadata (unlike Java reflection), the scheme must be populated explicitly at startup.
 
-The same mechanism is used by the Kubernetes API server itself — all built-in types are registered in the same way. Custom types just add entries to the same registry.
+The same mechanism is used by the Kubernetes API server itself, all built-in types are registered in the same way. Custom types just add entries to the same registry.
 
 ---
 
@@ -393,10 +393,10 @@ CertManager  (pki/)
     │ creates the actual cert resources in K8s
 ```
 
-The HTTP handler has no idea quota exists — it just calls the `pki.Manager` interface it was given:
+The HTTP handler has no idea quota exists, it just calls the `pki.Manager` interface it was given:
 
 ```go
-// HTTP handler — completely unaware of quota
+// HTTP handler, completely unaware of quota
 ca, err := h.pkiManager.CreateCertificateAuthority(ctx, parentRef, id, resource, opts)
 ```
 
@@ -425,7 +425,7 @@ func (m *enforcingManager) CreateCertificateAuthority(...) (*api.CertificateAuth
 }
 ```
 
-The enforcer and store are both nil-safe: passing `nil` as the enforcer skips quota enforcement (but rate counting still works). This is the feature flag — `QUOTA_ENFORCEMENT_ENABLED=false` means we pass `nil` as the enforcer, and the wrapper gracefully skips enforcement while still counting rates for billing.
+The enforcer and store are both nil-safe: passing `nil` as the enforcer skips quota enforcement (but rate counting still works). This is the feature flag, `QUOTA_ENFORCEMENT_ENABLED=false` means we pass `nil` as the enforcer, and the wrapper gracefully skips enforcement while still counting rates for billing.
 
 ### The bigger picture
 
@@ -438,7 +438,7 @@ You see this pattern throughout the Go standard library and ecosystem:
 
 The key advantage is that each concern (PKI logic, quota enforcement, rate counting) lives in isolation and is independently testable. The PKI manager has no tests for quota. The quota enforcer has no tests for cert creation. You test each layer with mocks of the other.
 
-**To learn more**: [Gang of Four Decorator pattern](https://refactoring.guru/design-patterns/decorator), [Go patterns — functional options and wrappers](https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis)
+**To learn more**: [Gang of Four Decorator pattern](https://refactoring.guru/design-patterns/decorator), [Go patterns, functional options and wrappers](https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis)
 
 ---
 
@@ -451,34 +451,34 @@ internal/
 ├── pki/              # pki.Manager interface + Kubernetes cert implementation
 │   └── manager.go    # the real cert operations (creates issuers, etc.)
 │
-├── quota/            # everything quota/billing — CRD types, store, enforcer, AND the decorator
+├── quota/            # everything quota/billing, CRD types, store, enforcer, AND the decorator
 │   ├── manager.go    # enforcingManager (the decorator wrapping pki.Manager)
 │   ├── enforcer.go   # quota check logic
 │   ├── storage_k8s_crd.go  # K8s-backed quota store
-│   └── v1alpha1/     # CRD Go types (under internal/ — not a public contract)
+│   └── v1alpha1/     # CRD Go types (under internal/, not a public contract)
 │
-├── httpapi/          # HTTP handlers — knows nothing about quota internals
+├── httpapi/          # HTTP handlers, knows nothing about quota internals
 │   ├── liquid.go     # LIQUID protocol endpoints
 │   └── api.go        # main API handlers
 │
-└── (no more k8s/ business logic — just the client factory)
+└── (no more k8s/ business logic, just the client factory)
 ```
 
 The `pki.Manager` interface lives in `internal/pki/` so both `internal/quota/` (decorator) and `internal/pki/` (implementation) can reference it without circular dependencies.
 
-The `v1alpha1` package is under `internal/quota/v1alpha1/` rather than `api/v1alpha1/`. Putting CRD types outside `internal/` would imply they are a stable public API contract — which they are not. They are an implementation detail of how the service stores quota data.
+The `v1alpha1` package is under `internal/quota/v1alpha1/` rather than `api/v1alpha1/`. Putting CRD types outside `internal/` would imply they are a stable public API contract, which they are not. They are an implementation detail of how the service stores quota data.
 
 ### The bigger picture
 
 Package design in Go has a few widely-accepted principles:
-- Packages should be **cohesive** — everything in a package is about the same concept
-- Packages should have **low coupling** — minimise imports between packages; import cycles are a compile error in Go
-- `internal/` is enforced by the Go toolchain — code inside `internal/` can only be imported by code in the same module, preventing accidental public API contracts
+- Packages should be **cohesive**, everything in a package is about the same concept
+- Packages should have **low coupling**, minimise imports between packages; import cycles are a compile error in Go
+- `internal/` is enforced by the Go toolchain, code inside `internal/` can only be imported by code in the same module, preventing accidental public API contracts
 - Interfaces should be defined where they are **used**, not where they are **implemented** (Go proverb: "accept interfaces, return structs")
 
 The "k8s package has business logic" smell is a common one in Go services: you end up with a package that's named after a technology (`k8s`, `postgres`, `redis`) but contains business rules. The fix is to ask "what concept does this implement?" and move the code there.
 
-**To learn more**: [Go package naming conventions](https://go.dev/blog/package-names), [Practical Go — package design](https://dave.cheney.net/practical-go/presentations/qcon-china.html#_package_design), [GopherCon 2018 — How Do You Structure Your Go Apps](https://www.youtube.com/watch?v=oL6JBUk6tj0)
+**To learn more**: [Go package naming conventions](https://go.dev/blog/package-names), [Practical Go, package design](https://dave.cheney.net/practical-go/presentations/qcon-china.html#_package_design), [GopherCon 2018, How Do You Structure Your Go Apps](https://www.youtube.com/watch?v=oL6JBUk6tj0)
 
 ---
 
@@ -515,12 +515,12 @@ liquid.ServiceInfo{
 
 ### Resources vs Rates
 
-- **Resources** are things you can quota and have a current usage (e.g. `ca_instances` — how many CAs exist right now). These appear in billing and quota enforcement. `HasQuota: true` means Limes will send `PUT /quota` calls.
-- **Rates** are billing counters — append-only measures of operations that happened (e.g. `ca_created`, `ee_cert_signed`). They are never limited, only measured. `HasUsage: true` means Limes will collect them in usage reports.
+- **Resources** are things you can quota and have a current usage (e.g. `ca_instances`, how many CAs exist right now). These appear in billing and quota enforcement. `HasQuota: true` means Limes will send `PUT /quota` calls.
+- **Rates** are billing counters, append-only measures of operations that happened (e.g. `ca_created`, `ee_cert_signed`). They are never limited, only measured. `HasUsage: true` means Limes will collect them in usage reports.
 
 ### PUT semantics
 
-The LIQUID spec mandates `PUT` for quota assignment, but the actual behaviour is more like `PATCH` — only the resources listed in the request body are updated; others are left unchanged. This is intentional by the LIQUID spec and is confusing at first glance. We document it in the code with a comment.
+The LIQUID spec mandates `PUT` for quota assignment, but the actual behaviour is more like `PATCH`, only the resources listed in the request body are updated; others are left unchanged. This is intentional by the LIQUID spec and is confusing at first glance. We document it in the code with a comment.
 
 ### Path prefix
 
@@ -528,12 +528,12 @@ Our LIQUID endpoints live under `/liquid/v1/...`, not `/v1/...`. This matters be
 
 ### The bigger picture
 
-LIQUID is a protocol used internally in our cloud, but the concept — a standardised "describe yourself, report your state, accept configuration" interface — is a common integration pattern in distributed systems. You see the same shape in:
-- **Prometheus `/metrics`** — describe what metrics you export, report current values
-- **Kubernetes admission webhooks** — standardised HTTP API for receiving configuration decisions
-- **Envoy's xDS protocol** — standardised API for receiving routing/cluster configuration
+LIQUID is a protocol used internally in our cloud, but the concept, a standardised "describe yourself, report your state, accept configuration" interface, is a common integration pattern in distributed systems. You see the same shape in:
+- **Prometheus `/metrics`**, describe what metrics you export, report current values
+- **Kubernetes admission webhooks**, standardised HTTP API for receiving configuration decisions
+- **Envoy's xDS protocol**, standardised API for receiving routing/cluster configuration
 
-The key design insight in all of these is that the consumer (Limes, Prometheus, Envoy) does not need to know anything about your internals — it just needs the standardised API surface. This makes it easy to add new services without changing the consumer.
+The key design insight in all of these is that the consumer (Limes, Prometheus, Envoy) does not need to know anything about your internals, it just needs the standardised API surface. This makes it easy to add new services without changing the consumer.
 
 **To learn more**: [go-api-declarations liquid package](https://pkg.go.dev/github.com/sapcc/go-api-declarations/liquid), [Limes documentation](https://github.com/sapcc/limes)
 
@@ -541,7 +541,7 @@ The key design insight in all of these is that the consumer (Limes, Prometheus, 
 
 ## OpenStack Seed: Registering in the Keystone Service Catalog
 
-For Limes to find your LIQUID endpoint, it must be registered in the **Keystone service catalog**. The service catalog is OpenStack's service registry — a key-value store of service types to endpoint URLs, maintained by the Keystone identity service.
+For Limes to find your LIQUID endpoint, it must be registered in the **Keystone service catalog**. The service catalog is OpenStack's service registry, a key-value store of service types to endpoint URLs, maintained by the Keystone identity service.
 
 In our OpenStack cloud, this is managed via an `OpenstackSeed` Custom Resource in Helm:
 
@@ -569,7 +569,7 @@ The `OpenstackSeed` operator (a separate Kubernetes controller running in the cl
 
 ### The bigger picture
 
-The Keystone service catalog is OpenStack's analogue of DNS for services — a central directory that maps service types (abstract names) to endpoint URLs (concrete addresses). Clients look up "where is the compute service?" and get back the endpoint for that region.
+The Keystone service catalog is OpenStack's analogue of DNS for services, a central directory that maps service types (abstract names) to endpoint URLs (concrete addresses). Clients look up "where is the compute service?" and get back the endpoint for that region.
 
 The pattern of registering services in a central catalog is common in microservice architectures: Consul, Kubernetes Services (via DNS), AWS Service Discovery, and Eureka all solve the same problem. The key question is always the same: how does service B find service A without hardcoding the URL?
 
@@ -581,7 +581,7 @@ The `OpenstackSeed` operator is a GitOps-style solution: you declare the desired
 
 ## The Full Discovery Chain
 
-Here is exactly how Limes discovers and talks to your service end-to-end. **Both steps are required** — missing either one means Limes cannot find the service.
+Here is exactly how Limes discovers and talks to your service end-to-end. **Both steps are required**, missing either one means Limes cannot find the service.
 
 ```
 Step 1: Your Helm chart (seed.yaml)
@@ -611,11 +611,11 @@ Step 4: Limes scraping (periodic)
         └─ PUT  https://my-service.region.tld/liquid/v1/projects/{id}/quota
 ```
 
-**The gotcha that costs you a day**: The Keystone catalog registration (Step 1, in our repo) is necessary but not sufficient. Without Step 2 (the Limes config, in a different repo), Limes does not know `pca` exists and will never look it up. This is a cross-team dependency — whoever operates the Limes deployment must add the entry. A TODO comment in the code and a note in the PR description is the minimum required to not forget this.
+**The gotcha that costs you a day**: The Keystone catalog registration (Step 1, in our repo) is necessary but not sufficient. Without Step 2 (the Limes config, in a different repo), Limes does not know `pca` exists and will never look it up. This is a cross-team dependency, whoever operates the Limes deployment must add the entry. A TODO comment in the code and a note in the PR description is the minimum required to not forget this.
 
 ### The bigger picture
 
-This two-step discovery pattern — register with a directory service, AND configure the consumer — is more common than it looks. You see it in:
+This two-step discovery pattern, register with a directory service, AND configure the consumer, is more common than it looks. You see it in:
 - **DNS + application config**: your service registers a DNS record, but the client also needs to have the hostname in its config
 - **Prometheus**: a service exposes `/metrics`, but Prometheus also needs a `scrape_config` entry
 - **Kafka**: a topic exists, but a consumer needs to be told which topic to subscribe to
@@ -626,7 +626,7 @@ In all these cases, the directory service (Keystone, DNS, Prometheus, Kafka) pro
 
 ## Helm Deployment: Tying It All Together
 
-Helm is a package manager for Kubernetes. A Helm chart is a collection of templated YAML manifests — you provide values and Helm renders the final Kubernetes objects.
+Helm is a package manager for Kubernetes. A Helm chart is a collection of templated YAML manifests, you provide values and Helm renders the final Kubernetes objects.
 
 The Helm chart needs several pieces to be production-ready:
 
@@ -639,16 +639,16 @@ In production, CRDs are typically placed in the `crds/` directory of the Helm ch
 
 ### 2. RBAC
 ServiceAccount + ClusterRole + ClusterRoleBinding granting the pod access to all required API groups:
-- `myapp.example.com` — for issuers, cluster issuers, and now `projectquotas`
-- `cert-manager.io` — for certificate requests
+- `myapp.example.com`, for issuers, cluster issuers, and now `projectquotas`
+- `cert-manager.io`, for certificate requests
 
 ### 3. OpenstackSeed
 Registers both the main API and the LIQUID endpoint in Keystone. Controlled by a feature flag (`openstackSeeds.enabled`) since it requires a live Keystone to be available and is not needed in development clusters.
 
 ### 4. Environment Variables
 The service reads quota config via environment variables, which are set in the Helm `Deployment` template:
-- `APP_NAMESPACE` — where to store quota CRDs
-- `QUOTA_ENFORCEMENT_ENABLED` — feature flag (rate counting is always on; enforcement is optional)
+- `APP_NAMESPACE`, where to store quota CRDs
+- `QUOTA_ENFORCEMENT_ENABLED`, feature flag (rate counting is always on; enforcement is optional)
 
 Non-sensitive config comes from a `ConfigMap`, sensitive config (credentials) comes from a `Secret` via `valueFrom.secretKeyRef`.
 
@@ -656,7 +656,7 @@ Non-sensitive config comes from a `ConfigMap`, sensitive config (credentials) co
 
 Helm's value is that your entire deployment is **reproducible and version-controlled**. Every environment (dev, staging, prod) uses the same chart with different values files. Rolling back is `helm rollback`. Reviewing a change is `helm diff`.
 
-The key Helm principle is that `values.yaml` is the public API of your chart — it is what operators configure. Internal template details are an implementation concern. Keep values.yaml clean and well-documented.
+The key Helm principle is that `values.yaml` is the public API of your chart, it is what operators configure. Internal template details are an implementation concern. Keep values.yaml clean and well-documented.
 
 For CRDs specifically, Helm has a known limitation: if you update a CRD schema, `helm upgrade` does not automatically update the CRD (to avoid breaking existing resources). The standard practice is to put CRDs in `crds/` (Helm installs them but does not upgrade or delete them) or to manage CRD installation separately.
 
@@ -675,7 +675,7 @@ The [REUSE specification](https://reuse.software/) (from the Free Software Found
 
 But auto-generated files (like our CRD YAML from `controller-gen` and the `zz_generated.deepcopy.go` file) present a problem: any inline headers get **overwritten** on regeneration.
 
-The solution is `REUSE.toml` — a file that assigns copyright and license to files **externally**, using glob patterns:
+The solution is `REUSE.toml`, a file that assigns copyright and license to files **externally**, using glob patterns:
 
 ```toml
 [[annotations]]
@@ -684,15 +684,15 @@ SPDX-FileCopyrightText = "Your Company"
 SPDX-License-Identifier = "Apache-2.0"
 ```
 
-The `reuse lint` tool reads this and considers those files covered without needing inline headers. Using a glob (`**`) means any future CRDs added to that directory are automatically covered — you do not need to add a new annotation each time you add a CRD.
+The `reuse lint` tool reads this and considers those files covered without needing inline headers. Using a glob (`**`) means any future CRDs added to that directory are automatically covered, you do not need to add a new annotation each time you add a CRD.
 
 ### The bigger picture
 
-REUSE is part of the broader **SBOM** (Software Bill of Materials) movement — making it machine-readable which software components are in your product, under what licenses, and by whom. The EU Cyber Resilience Act (2024) and US Executive Order on Cybersecurity (2021) both push in this direction.
+REUSE is part of the broader **SBOM** (Software Bill of Materials) movement, making it machine-readable which software components are in your product, under what licenses, and by whom. The EU Cyber Resilience Act (2024) and US Executive Order on Cybersecurity (2021) both push in this direction.
 
 SPDX (Software Package Data Exchange) is the underlying standard. Every license has an SPDX identifier (e.g. `Apache-2.0`, `MIT`, `GPL-2.0-only`). Every file can have an SPDX `FileCopyrightText` and `LicenseInfoInFile` tag. Tools like `reuse`, `scancode`, and `fossology` parse these to generate license compliance reports.
 
-The `reuse.toml` approach for generated files is the correct solution because code generation is explicitly accounted for in the REUSE spec — the tool understands that some files cannot carry inline headers.
+The `reuse.toml` approach for generated files is the correct solution because code generation is explicitly accounted for in the REUSE spec, the tool understands that some files cannot carry inline headers.
 
 **To learn more**: [REUSE specification](https://reuse.software/spec/), [SPDX specification](https://spdx.dev/), [reuse tool documentation](https://reuse.readthedocs.io/)
 
@@ -700,11 +700,11 @@ The `reuse.toml` approach for generated files is the correct solution because co
 
 ## Lessons from Code Review
 
-These are patterns and mistakes that came up during the PR review process. They are not specific to quota or billing — they are general Go and Kubernetes lessons that happen to have surfaced here.
+These are patterns and mistakes that came up during the PR review process. They are not specific to quota or billing, they are general Go and Kubernetes lessons that happen to have surfaced here.
 
 ### Go Early Return Pattern
 
-Nested conditionals make Go code harder to follow. The convention is to use **guard clauses** — check the failure condition first and return early, keeping the happy path at the lowest indentation level.
+Nested conditionals make Go code harder to follow. The convention is to use **guard clauses**, check the failure condition first and return early, keeping the happy path at the lowest indentation level.
 
 **Before (nested):**
 ```go
@@ -728,21 +728,21 @@ if err := m.quotaStorage.IncrementRate(...); err != nil {
 return ca, nil
 ```
 
-This is a Go convention, not just style — it reduces cognitive nesting and makes the "what happens when everything is fine?" path obvious.
+This is a Go convention, not just style, it reduces cognitive nesting and makes the "what happens when everything is fine?" path obvious.
 
 ### retry.RetryOnConflict vs Manual Retry Loop
 
 The initial implementation used a hand-rolled `for range 5` loop for handling `409 Conflict` on rate counter updates. The code review replaced it with `retry.RetryOnConflict(retry.DefaultRetry, ...)` from `client-go/util/retry`.
 
-**Why:** `DefaultRetry` provides 5 attempts with 10ms exponential backoff. The intent is self-documenting — anyone reading the code knows immediately what kind of retry this is. Hand-rolled loops require the reader to parse the logic to understand the behaviour.
+**Why:** `DefaultRetry` provides 5 attempts with 10ms exponential backoff. The intent is self-documenting, anyone reading the code knows immediately what kind of retry this is. Hand-rolled loops require the reader to parse the logic to understand the behaviour.
 
 ### Fail-Open with Logging
 
-When the quota subsystem encounters an error (e.g. cannot read the ProjectQuota CRD), the service should **not** block CA creation. Quota is a soft enforcement layer — if it is down, the platform still needs to function.
+When the quota subsystem encounters an error (e.g. cannot read the ProjectQuota CRD), the service should **not** block CA creation. Quota is a soft enforcement layer, if it is down, the platform still needs to function.
 
-**Before:** `return nil //nolint:nilerr` — errors silently swallowed, linter suppressed.
+**Before:** `return nil //nolint:nilerr`, errors silently swallowed, linter suppressed.
 
-**After:** `logg.Error("quota enforcement skipped: ..."); return nil` — still fail-open, but now operators see it in logs and can investigate.
+**After:** `logg.Error("quota enforcement skipped: ..."); return nil`, still fail-open, but now operators see it in logs and can investigate.
 
 The principle: fail-open is a valid design choice, but **silent** failure is not. Always log when you skip an enforcement step.
 
@@ -761,13 +761,13 @@ The lesson: not every race condition needs to be fixed. Document the trade-off, 
 
 **Before:** List all HSMIssuers in the namespace, loop through results checking `projectID` match.
 
-**After:** `ctrlclient.MatchingLabels{"project_id": projectID}` — server-side filter, then `len(issuerList.Items)`.
+**After:** `ctrlclient.MatchingLabels{"project_id": projectID}`, server-side filter, then `len(issuerList.Items)`.
 
-**Why:** Pushes filtering to the Kubernetes API server (indexed lookup) instead of fetching everything and filtering in Go. This matters at scale — listing 10,000 issuers to find the 5 belonging to one project is wasteful. Also: controller-runtime does **not** auto-paginate — without `Limit`, the API server returns everything in one response.
+**Why:** Pushes filtering to the Kubernetes API server (indexed lookup) instead of fetching everything and filtering in Go. This matters at scale, listing 10,000 issuers to find the 5 belonging to one project is wasteful. Also: controller-runtime does **not** auto-paginate, without `Limit`, the API server returns everything in one response.
 
 ### Inlining Single-Use Types
 
-The original implementation had a separate `Enforcer` struct with an exported `CheckCACreation` method, used only inside `enforcingManager`. The review inlined it — the fields (`quotaStorage`, `usageCollector`, `enforcementEnabled`) moved directly into `enforcingManager`, and `checkCACreation` became a private method.
+The original implementation had a separate `Enforcer` struct with an exported `CheckCACreation` method, used only inside `enforcingManager`. The review inlined it, the fields (`quotaStorage`, `usageCollector`, `enforcementEnabled`) moved directly into `enforcingManager`, and `checkCACreation` became a private method.
 
 **Principle:** If a type is only used in one place, inline it. Fewer files, fewer exports, less surface area to understand. You can always extract it later if reuse emerges.
 
@@ -783,7 +783,7 @@ E2E tests are skipped with `go test -short`. Unit tests always run.
 
 **Why `MemoryStore` exists:** The fake K8s client does not know about custom CRDs (not in its scheme) and does not handle SSA `Patch(Apply)` correctly. An in-memory implementation that satisfies the same `QuotaStore` interface lets you test business logic without Kubernetes. The same pattern is used throughout the codebase: `FakeInMemoryManager` for PKI unit tests, real client for e2e.
 
-**`-race` flag:** `go test -race` enables Go's race detector — it instruments memory access at runtime to catch unsynchronized concurrent reads/writes. This is separate from logical race testing (like the TOCTOU gap above). Always run with `-race` in CI.
+**`-race` flag:** `go test -race` enables Go's race detector, it instruments memory access at runtime to catch unsynchronized concurrent reads/writes. This is separate from logical race testing (like the TOCTOU gap above). Always run with `-race` in CI.
 
 ---
 
@@ -808,7 +808,7 @@ YAML is indentation-sensitive and does not warn you when nesting breaks:
 ```yaml
 clavis_api:
   image: something
-installCRDs: true       # <- root level — breaks the clavis_api block
+installCRDs: true       # <- root level, breaks the clavis_api block
   quota:                # <- now orphaned, not under clavis_api
     enforcement_enabled: false
 ```
@@ -842,43 +842,43 @@ reuse:
       licenseIdentifier: "Apache-2.0"
 ```
 
-The tool reads these and generates `REUSE.toml`. You **don't edit `REUSE.toml` directly** — it is a generated file. To add coverage for a new file pattern, add it to `Makefile.maker.yaml` and re-run the tool.
+The tool reads these and generates `REUSE.toml`. You **don't edit `REUSE.toml` directly**, it is a generated file. To add coverage for a new file pattern, add it to `Makefile.maker.yaml` and re-run the tool.
 
 The generated `Makefile` includes targets like `make build`, `make test`, `make check` (lint + REUSE compliance). You don't edit it directly either.
 
-**Practical note:** If you cannot run `go-makefile-maker` locally (e.g. missing `go-licence-detector`), you can edit `Makefile.maker.yaml` and trust CI to regenerate. For immediate coverage, add inline SPDX headers to files you control (like CRD YAML) — this satisfies `reuse lint` without needing the tool.
+**Practical note:** If you cannot run `go-makefile-maker` locally (e.g. missing `go-licence-detector`), you can edit `Makefile.maker.yaml` and trust CI to regenerate. For immediate coverage, add inline SPDX headers to files you control (like CRD YAML), this satisfies `reuse lint` without needing the tool.
 
 ---
 
 ## Key Takeaways
 
-1. **CRDs are a legitimate storage backend** for simple data at Kubernetes-native scale. You do not always need a database — evaluate whether etcd's constraints (small objects, key-based access) match your use case.
+1. **CRDs are a legitimate storage backend** for simple data at Kubernetes-native scale. You do not always need a database, evaluate whether etcd's constraints (small objects, key-based access) match your use case.
 
-2. **SSA and Update serve different purposes** — SSA for multi-manager field ownership (different components writing to different fields), `Get` + `Update` for atomic read-modify-write. Never use SSA for incrementing counters.
+2. **SSA and Update serve different purposes**, SSA for multi-manager field ownership (different components writing to different fields), `Get` + `Update` for atomic read-modify-write. Never use SSA for incrementing counters.
 
-3. **ResourceVersion is your optimistic lock** — it only works with `Update`, not with SSA. The retry loop is not optional; under concurrent load you will see conflicts.
+3. **ResourceVersion is your optimistic lock**, it only works with `Update`, not with SSA. The retry loop is not optional; under concurrent load you will see conflicts.
 
-4. **Maps in CRDs give extensibility** at the cost of compile-time safety. Use typed constants to compensate. Don't blindly apply "maps in CRDs are bad" — evaluate whether the concern (field ownership conflicts, unbounded growth) actually applies to your situation.
+4. **Maps in CRDs give extensibility** at the cost of compile-time safety. Use typed constants to compensate. Don't blindly apply "maps in CRDs are bad", evaluate whether the concern (field ownership conflicts, unbounded growth) actually applies to your situation.
 
-5. **Service discovery is a chain, not a single step** — Keystone catalog registration + consumer config + correct naming convention. Miss any link and it fails silently.
+5. **Service discovery is a chain, not a single step**, Keystone catalog registration + consumer config + correct naming convention. Miss any link and it fails silently.
 
-6. **The decorator pattern keeps concerns clean** — wrap an interface with another implementation of the same interface to add cross-cutting logic (quota, logging, tracing) without touching the business logic layer.
+6. **The decorator pattern keeps concerns clean**, wrap an interface with another implementation of the same interface to add cross-cutting logic (quota, logging, tracing) without touching the business logic layer.
 
-7. **Packages should reflect domain concepts, not technology** — `internal/quota/` for quota logic, not `internal/k8s/` just because it happens to use Kubernetes.
+7. **Packages should reflect domain concepts, not technology**, `internal/quota/` for quota logic, not `internal/k8s/` just because it happens to use Kubernetes.
 
-8. **Auto-generated files need special REUSE handling** — use `reuse.toml` annotations with glob patterns. Don't add inline headers that will be overwritten.
+8. **Auto-generated files need special REUSE handling**, use `reuse.toml` annotations with glob patterns. Don't add inline headers that will be overwritten.
 
 9. **RBAC is the most forgotten step** when adding CRDs. Always update the Helm RBAC template when adding a new resource type.
 
-10. **Document cross-repo dependencies explicitly** — if your service requires a change in another repo (like a Limes config update), make that impossible to miss: TODO comment in code, note in PR description, issue in the dependent repo.
+10. **Document cross-repo dependencies explicitly**, if your service requires a change in another repo (like a Limes config update), make that impossible to miss: TODO comment in code, note in PR description, issue in the dependent repo.
 
-11. **Fail-open is valid; silent failure is not** — if you skip enforcement on error, log it. Operators need visibility into degraded behaviour.
+11. **Fail-open is valid; silent failure is not**, if you skip enforcement on error, log it. Operators need visibility into degraded behaviour.
 
-12. **Not every race condition needs fixing** — document the trade-off (TOCTOU gap), quantify the impact (low-frequency operations + periodic reconciliation), and make a deliberate decision.
+12. **Not every race condition needs fixing**, document the trade-off (TOCTOU gap), quantify the impact (low-frequency operations + periodic reconciliation), and make a deliberate decision.
 
-13. **Use standard retry helpers** — `retry.RetryOnConflict` from client-go is self-documenting and provides backoff. Hand-rolled loops require readers to reverse-engineer the intent.
+13. **Use standard retry helpers**, `retry.RetryOnConflict` from client-go is self-documenting and provides backoff. Hand-rolled loops require readers to reverse-engineer the intent.
 
-14. **Filter server-side, not client-side** — use `MatchingLabels` to push filtering to the API server instead of listing everything and looping in Go.
+14. **Filter server-side, not client-side**, use `MatchingLabels` to push filtering to the API server instead of listing everything and looping in Go.
 
 ---
 

@@ -5,7 +5,7 @@ This guide walks through deploying Mattermost on Kubernetes. It covers two scena
 - **Scenario A:** Creating your own cluster from scratch on OpenStack
 - **Scenario B:** Deploying into an existing shared cluster (most common)
 
-Along the way we explain key concepts — Helm, Operators, registries, storage — so you understand *why* we do each step, not just *what* to do.
+Along the way we explain key concepts, Helm, Operators, registries, storage, so you understand *why* we do each step, not just *what* to do.
 
 ---
 
@@ -37,17 +37,17 @@ Along the way we explain key concepts — Helm, Operators, registries, storage �
 Kubernetes (K8s) is a platform for running containerized applications. Think of it as an OS for your apps: it handles scheduling (where should this run?), scaling (run more copies under load), self-healing (restart crashes), and networking.
 
 Key terms:
-- **Pod** — Smallest unit. Usually wraps one container.
-- **Deployment** — Manages multiple identical pods ("run 3 copies and keep them running")
-- **StatefulSet** — Like Deployment but for stateful apps (databases) needing stable names and persistent storage
-- **Service** — Stable network address for a group of pods. Pods come and go; Service stays.
-- **Namespace** — Virtual partition isolating your resources from other teams
+- **Pod**, Smallest unit. Usually wraps one container.
+- **Deployment**, Manages multiple identical pods ("run 3 copies and keep them running")
+- **StatefulSet**, Like Deployment but for stateful apps (databases) needing stable names and persistent storage
+- **Service**, Stable network address for a group of pods. Pods come and go; Service stays.
+- **Namespace**, Virtual partition isolating your resources from other teams
 
 ---
 
 ### What is Helm?
 
-Helm is the package manager for Kubernetes — like apt on Ubuntu or brew on Mac, but for Kubernetes apps.
+Helm is the package manager for Kubernetes, like apt on Ubuntu or brew on Mac, but for Kubernetes apps.
 
 Instead of writing dozens of YAML files from scratch, you use a Helm Chart: a pre-packaged, configurable collection of Kubernetes resources.
 
@@ -59,10 +59,10 @@ helm install my-postgres bitnami/postgresql --set auth.password=mypassword
 ```
 
 Key Helm concepts:
-- **Chart** — The package (like a .deb file)
-- **Release** — An installed chart instance in your cluster
-- **Values** — Configuration you pass to customize the chart
-- **Repository** — A collection of charts hosted online (like an app store)
+- **Chart**, The package (like a .deb file)
+- **Release**, An installed chart instance in your cluster
+- **Values**, Configuration you pass to customize the chart
+- **Repository**, A collection of charts hosted online (like an app store)
 
 When to use Helm: Deploying well-known apps, managing complex multi-resource deployments, when you want easy rollbacks.
 
@@ -97,14 +97,14 @@ spec:
 The operator handles everything else automatically.
 
 Operators use two building blocks:
-- **CRDs (Custom Resource Definitions)** — New resource types (like Cluster, Backup)
-- **Controllers** — Loops that watch resources and act to reach desired state
+- **CRDs (Custom Resource Definitions)**, New resource types (like Cluster, Backup)
+- **Controllers**, Loops that watch resources and act to reach desired state
 
 Common operators:
-- CNPG — PostgreSQL cluster management
-- cert-manager — SSL certificate management (technically an operator)
-- DISCO — Automatic DNS record management
-- Prometheus Operator — Monitoring setup
+- CNPG, PostgreSQL cluster management
+- cert-manager, SSL certificate management (technically an operator)
+- DISCO, Automatic DNS record management
+- Prometheus Operator, Monitoring setup
 
 Important: Operators require cluster-admin to install. On shared clusters, check with your admin first.
 
@@ -112,7 +112,7 @@ Important: Operators require cluster-admin to install. On shared clusters, check
 
 ### What is a Container Registry?
 
-A container registry stores Docker images — like GitHub but for containers.
+A container registry stores Docker images, like GitHub but for containers.
 
 Common public registries: Docker Hub (docker.io), GitHub Container Registry (ghcr.io), Quay.io
 
@@ -259,12 +259,12 @@ cluster
 
 ### Why Persistent Storage Matters
 
-Containers are ephemeral — they lose everything when they restart. For a database this means losing all data. Persistent Volumes store data outside the container on a durable volume.
+Containers are ephemeral, they lose everything when they restart. For a database this means losing all data. Persistent Volumes store data outside the container on a durable volume.
 
 The three components:
-- **StorageClass** — Type of storage (provisioned by cluster admins)
-- **PersistentVolumeClaim (PVC)** — Your request: "I need 10GB"
-- **PersistentVolume (PV)** — The actual storage created and bound to your PVC
+- **StorageClass**, Type of storage (provisioned by cluster admins)
+- **PersistentVolumeClaim (PVC)**, Your request: "I need 10GB"
+- **PersistentVolume (PV)**, The actual storage created and bound to your PVC
 
 ```
 App → PVC ("I need 10GB") → StorageClass → PV (actual disk created)
@@ -549,7 +549,7 @@ helm install mattermost-db bitnami/postgresql \
   --set primary.persistence.size=10Gi
 ```
 
-### Option 3: Operator (CNPG) — Production HA
+### Option 3: Operator (CNPG), Production HA
 
 ```bash
 # Check if already installed
@@ -581,7 +581,7 @@ kubectl apply -f postgres-deployment.yaml
 kubectl get pods -w
 
 kubectl exec -it postgres-0 -- psql -U mattermost -d mattermost -c "\dt"
-# Expected: "Did not find any tables" — correct, Mattermost creates them on first start
+# Expected: "Did not find any tables", correct, Mattermost creates them on first start
 ```
 
 ---
@@ -734,7 +734,7 @@ kubectl get ingressclass
 
 ### Step 2: Find the DNS Naming Pattern
 
-Look at existing ingresses — they show the correct format to use:
+Look at existing ingresses, they show the correct format to use:
 
 ```bash
 kubectl get ingress --all-namespaces
@@ -746,7 +746,7 @@ Use the same pattern: mattermost.cluster.region.company.com
 
 ### Step 3: DNS Options
 
-**Option A — Automatic DNS via DISCO operator**
+**Option A, Automatic DNS via DISCO operator**
 
 Some clusters auto-create DNS records when you annotate your Ingress:
 
@@ -761,7 +761,7 @@ Check if available:
 kubectl get pods --all-namespaces | grep -i disco
 ```
 
-**Option B — Manual DNS**
+**Option B, Manual DNS**
 
 ```bash
 openstack recordset create myzone.company.com. mattermost \
@@ -771,7 +771,7 @@ openstack recordset create myzone.company.com. mattermost \
 nslookup mattermost.cluster.region.company.com
 ```
 
-**Option C — Test without DNS first**
+**Option C, Test without DNS first**
 
 Always verify Ingress routing works before fighting DNS:
 
@@ -1042,7 +1042,7 @@ kubectl logs <pod-name> --previous   # Logs from previous crashed instance
 
 **Request all permissions upfront.** Permissions walls mid-deployment are frustrating. Request everything at once before you start.
 
-**Custom images have custom requirements.** Company-specific images have unique environment variables, volume paths, and required ConfigMaps. Find an existing deployment of the same image — do not guess.
+**Custom images have custom requirements.** Company-specific images have unique environment variables, volume paths, and required ConfigMaps. Find an existing deployment of the same image, do not guess.
 
 **Environment variables over UI config.** Anything stored inside a container is gone when it restarts. All persistent configuration belongs in your deployment YAML.
 
@@ -1052,7 +1052,7 @@ kubectl logs <pod-name> --previous   # Logs from previous crashed instance
 
 **Object storage credentials and permissions are linked.** Create EC2 credentials only after you have the right storage role. Existing credentials will not automatically pick up new permissions.
 
-**DNS automation exists — find it first.** Before waiting days for DNS approval, check if your cluster has automated DNS (like DISCO). One annotation may be all you need.
+**DNS automation exists, find it first.** Before waiting days for DNS approval, check if your cluster has automated DNS (like DISCO). One annotation may be all you need.
 
 **Read the error message.** Kubernetes errors are usually precise. PGVERSION: unbound variable means: set the PGVERSION environment variable. That is the entire fix.
 

@@ -19,7 +19,7 @@
 
 ## Introduction
 
-As a Cloud Native Developer working with OpenStack and KVM infrastructure, I wanted to understand the underlying technology better. This blog post chronicles my journey setting up OpenStack DevStack on an Apple Silicon MacBook—a journey filled with learning, troubleshooting, and valuable insights into cloud infrastructure.
+As a Cloud Native Developer working with OpenStack and KVM infrastructure, I wanted to understand the underlying technology better. This blog post chronicles my journey setting up OpenStack DevStack on an Apple Silicon MacBook-a journey filled with learning, troubleshooting, and valuable insights into cloud infrastructure.
 
 **Spoiler alert:** It worked, but not without significant challenges!
 
@@ -197,7 +197,7 @@ Keystone: http://172.16.145.128/identity/
 - Dashboard console: "Guest has not initialized the display yet"
 
 **Initial Confusion:**
-Everything looked fine in OpenStack, but VMs never actually booted. No errors, no logs—just silence.
+Everything looked fine in OpenStack, but VMs never actually booted. No errors, no logs-just silence.
 
 ### Root Cause Discovery
 
@@ -1178,6 +1178,6 @@ Even though:
 
 Setting up OpenStack on Apple Silicon was challenging, educational, and ultimately rewarding. While the performance limitations of QEMU made some tasks impractical, the journey provided invaluable hands-on experience with cloud infrastructure, networking, and complex problem-solving.
 
-**The best way to learn is by doing—even when (especially when) things don't work perfectly the first time.**
+**The best way to learn is by doing-even when (especially when) things don't work perfectly the first time.**
 
 Happy cloud building!
