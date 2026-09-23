@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/jane-waithira-website/static/css/main.e6c13ad2.css",
-    "main.js": "/jane-waithira-website/static/js/main.9c5a101d.js",
+    "main.js": "/jane-waithira-website/static/js/main.0df1681b.js",
     "static/js/453.13d5a1e0.chunk.js": "/jane-waithira-website/static/js/453.13d5a1e0.chunk.js",
     "static/media/building-quota-billing-kubernetes-openstack.md": "/jane-waithira-website/static/media/building-quota-billing-kubernetes-openstack.48cc6d54d9c96098798c.md",
     "static/media/agent-garage-field-guide.md": "/jane-waithira-website/static/media/agent-garage-field-guide.d4b3bfde7286ad77c71a.md",
@@ -10,20 +10,20 @@
     "static/media/k8s-6-helm-and-fortune-cookies.md": "/jane-waithira-website/static/media/k8s-6-helm-and-fortune-cookies.9848653465a05cc58384.md",
     "static/media/go-interfaces-vs-python-duck-typing.md": "/jane-waithira-website/static/media/go-interfaces-vs-python-duck-typing.6b2f0a8dc06948862e84.md",
     "static/media/k8s-5-statefulsets-rbac-networkpolicies.md": "/jane-waithira-website/static/media/k8s-5-statefulsets-rbac-networkpolicies.736c5cfecab64a7aa38b.md",
+    "static/media/observability-pipeline-formats.md": "/jane-waithira-website/static/media/observability-pipeline-formats.c2cb33c5ca9cc5916bb3.md",
     "static/media/k8s-3-pods-deployments-services.md": "/jane-waithira-website/static/media/k8s-3-pods-deployments-services.9184a3d979d575aa6155.md",
     "static/media/k8s-4-storage-configmaps-ingress.md": "/jane-waithira-website/static/media/k8s-4-storage-configmaps-ingress.f60b00d63dab9705daee.md",
     "static/media/k8s-1-containers-under-the-hood.md": "/jane-waithira-website/static/media/k8s-1-containers-under-the-hood.6a1dfd81e410f6cb245c.md",
     "static/media/k8s-2-docker-and-dockerfiles.md": "/jane-waithira-website/static/media/k8s-2-docker-and-dockerfiles.28812114d397a0ca5bfe.md",
     "static/media/k8s-field-guide.md": "/jane-waithira-website/static/media/k8s-field-guide.751b7c879371d47193d9.md",
-    "static/media/Data-pipelines.md": "/jane-waithira-website/static/media/Data-pipelines.9e5fc4b668a4e1894b29.md",
     "static/media/building-shopSmart.md": "/jane-waithira-website/static/media/building-shopSmart.1d1dd3e77d34a9e89f61.md",
     "index.html": "/jane-waithira-website/index.html",
     "main.e6c13ad2.css.map": "/jane-waithira-website/static/css/main.e6c13ad2.css.map",
-    "main.9c5a101d.js.map": "/jane-waithira-website/static/js/main.9c5a101d.js.map",
+    "main.0df1681b.js.map": "/jane-waithira-website/static/js/main.0df1681b.js.map",
     "453.13d5a1e0.chunk.js.map": "/jane-waithira-website/static/js/453.13d5a1e0.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.9c5a101d.js"
+    "static/js/main.0df1681b.js"
   ]
 }
