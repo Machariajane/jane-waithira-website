@@ -22,13 +22,13 @@ import k8s3PodsDeploymentsServicesUrl from './blogs/k8s-3-pods-deployments-servi
 import k8s4StorageConfigmapsIngressUrl from './blogs/k8s-4-storage-configmaps-ingress.md';
 import k8s5StatefulsetsRbacNetworkpoliciesUrl from './blogs/k8s-5-statefulsets-rbac-networkpolicies.md';
 import k8s6HelmAndFortuneCookiesUrl from './blogs/k8s-6-helm-and-fortune-cookies.md';
-import dataPipelinesUrl from './blogs/Data-pipelines.md';
+import dataPipelinesUrl from './blogs/observability-pipeline-formats.md';
 
 // Blog post metadata - ADD NEW POSTS HERE
 const blogPostsMeta = [
     {
-        id: "data-pipelines",
-        title: "Log Pipelines Demystified: Wire Formats, OTLP, gRPC, and Kafka on Kubernetes",
+        id: "observability-pipeline-formats",
+        title: "Observability Pipelines Demystified: Wire Formats, OTLP, gRPC, Protobuf, Avro, and the OSI Model",
         date: "September 2026",
         sortDate: "2026-09-23",
         author: "Jane Waithira",
