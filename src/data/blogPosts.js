@@ -22,11 +22,22 @@ import k8s3PodsDeploymentsServicesUrl from './blogs/k8s-3-pods-deployments-servi
 import k8s4StorageConfigmapsIngressUrl from './blogs/k8s-4-storage-configmaps-ingress.md';
 import k8s5StatefulsetsRbacNetworkpoliciesUrl from './blogs/k8s-5-statefulsets-rbac-networkpolicies.md';
 import k8s6HelmAndFortuneCookiesUrl from './blogs/k8s-6-helm-and-fortune-cookies.md';
+import dataPipelinesUrl from './blogs/Data-pipelines.md';
 
 // Blog post metadata - ADD NEW POSTS HERE
 const blogPostsMeta = [
     {
-        id: "k8s-field-guide",
+        id: "data-pipelines",
+        title: "Log Pipelines Demystified: Wire Formats, OTLP, gRPC, and Kafka on Kubernetes",
+        date: "September 2026",
+        sortDate: "2026-09-23",
+        author: "Jane Waithira",
+        excerpt: "The three layers every observability pipeline stacks — wire format, transport protocol, and data schema — and how CRI logs, OTLP/gRPC, Kafka, and Doris Stream Load each fit. Three production-ready architectures compared.",
+        coverImage: "/images/blog/default.jpg",
+        tags: ["Observability", "Kubernetes", "OpenTelemetry", "Kafka", "Logging"],
+        contentUrl: dataPipelinesUrl,
+    },
+    {
         title: "5 Days from Linux Primitives to Helm Charts: A Kubernetes Field Guide",
         date: "June 2026",
         sortDate: "2026-06-14",
