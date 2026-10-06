@@ -226,24 +226,6 @@ function HomePage() {
 
             <Divider />
 
-            <HighlightsSection>
-                <SectionTitle>Why Work With Me</SectionTitle>
-                <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
-                    <p>
-                        With a background in Telecommunications and Information Engineering and a passion for data science,
-                        I bring both technical depth and business acumen to every project. I've successfully
-                        implemented machine learning solutions that have directly impacted business metrics and
-                        improved customer experiences.
-                    </p>
-                    <p>
-                        I'm committed to continuous learning and staying at the forefront of AI advancements,
-                        as evidenced by my participation in competitions, workshops, and mentorship programs.
-                    </p>
-                    <Button to="/contact" secondary style={{ marginTop: '20px' }}>
-                        Contact Me
-                    </Button>
-                </div>
-            </HighlightsSection>
         </main>
     );
 }
