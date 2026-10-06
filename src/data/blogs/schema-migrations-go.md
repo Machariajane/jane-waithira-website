@@ -325,6 +325,31 @@ CREATE INDEX CONCURRENTLY idx_users_email ON users(email);
 
 ---
 
+## Timeouts
+
+Migrations that hang are worse than migrations that fail. A hung migration keeps the deploy pipeline waiting, holds locks that block the live service, and leaves nobody sure whether to intervene. Set two timeouts per migration:
+
+- **`lock_timeout`** (short) — fail fast if another transaction holds the lock. The migration retries on the next deploy rather than waiting indefinitely.
+- **`statement_timeout`** (matched to expected migration time) — hard upper bound on the migration itself. If a `CREATE INDEX` normally takes 30 seconds, cap it at 2 minutes.
+
+Set them per-migration in the file, not globally — different migrations have different budgets.
+
+```sql
+-- PostgreSQL
+SET LOCAL statement_timeout = '2min';
+SET LOCAL lock_timeout = '5s';
+CREATE INDEX idx_users_email ON users(email);
+```
+
+```sql
+-- MySQL / Doris
+SET SESSION max_execution_time = 120000;   -- milliseconds
+```
+
+Online-safe operations (`CREATE INDEX CONCURRENTLY` on PostgreSQL, `ALGORITHM=INPLACE, LOCK=NONE` on MySQL) sidestep most lock-timeout issues by not taking the table lock in the first place.
+
+---
+
 ## Backups before migrations
 
 Taking a database snapshot before a schema-changing deploy is a standard safety net — but it's **not universal advice**. It depends on the data's value and the restore cost.
@@ -433,7 +458,7 @@ Three kinds of test are worth having:
 Spin up an empty database, run all migrations in order, assert the end state matches expectations. Fastest to write.
 
 **Is the migration reversible?**
-Apply up, apply down, apply up again — the schema should match. Only possible if you write `down` migrations.
+Everyone tests `up`. Almost nobody tests `down`. The up test runs in CI because the full test suite exercises the resulting schema; the down migration is run only when there's an outage and someone needs it. If you've never run `goose down` on your migration, you haven't tested it. Apply up, apply down, apply up again — the schema should match. This catches the common bug of writing `DROP TABLE users` as the down for an up that created the table *and* a trigger: the trigger isn't dropped, the next up fails.
 
 **Does the data survive the migration?**
 For data-affecting migrations: seed representative data, run the migration, assert the data is still queryable in the new shape. Hardest to write but catches silent data loss.
@@ -487,6 +512,36 @@ Rarely a real problem. SQL files are tiny; hundreds of them add <1 MB. If you se
 
 **Rebuild time.**
 `go build` reads the migration files but doesn't compile them. If builds slow down, it's almost always because the Go code changed, not because migrations grew.
+
+---
+
+## Schema migrations vs data migrations
+
+**Schema migrations change the shape of the table. Data migrations change the rows in it.** They're different problems and usually belong in different places.
+
+A schema migration is: `ALTER TABLE users ADD COLUMN tenant_id VARCHAR(64) NULL;`. Fast, atomic (where DDL transactions apply), rerunnable, naturally idempotent with `IF NOT EXISTS` patterns.
+
+A data migration is: `UPDATE users SET tenant_id = lookup_tenant(email) WHERE tenant_id IS NULL;` on 50 million rows. Slow, long-running, potentially partial if it fails, and the "did it already run" check is harder than looking at a tracking table.
+
+| | Schema migration | Data migration |
+|---|---|---|
+| What it changes | Column definitions, indexes, constraints | The data itself |
+| Time cost | Usually fast | Scales with row count |
+| Failure recovery | Rerun the DDL | Partial writes are hard — where did it stop? |
+| Testing | Schema conformance tests | Needs production-like data volumes |
+| Idempotency | Often natural (`IF NOT EXISTS`) | Must be designed in |
+
+Three patterns for data transforms:
+
+| Pattern | When |
+|---|---|
+| **In the migration** | Row count is small (thousands), transform is simple, downtime acceptable |
+| **Background job after the migration** | Row count is large, transform is slow, deploy must not block |
+| **Dual-write transition** | Both old and new shape coexist; code reads both; migration happens over time |
+
+For large data transforms, write **idempotent batches**: process N rows at a time, record progress in a watermark table, resume from the watermark on failure. Never a single SQL statement over a table of unknown size.
+
+**Test data migrations at production-shaped volumes.** A transform that works on a thousand rows may run for hours on a hundred million. Spin up a staging database with representative data volume before running in production.
 
 ---
 
