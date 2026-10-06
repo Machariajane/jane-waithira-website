@@ -23,9 +23,21 @@ import k8s4StorageConfigmapsIngressUrl from './blogs/k8s-4-storage-configmaps-in
 import k8s5StatefulsetsRbacNetworkpoliciesUrl from './blogs/k8s-5-statefulsets-rbac-networkpolicies.md';
 import k8s6HelmAndFortuneCookiesUrl from './blogs/k8s-6-helm-and-fortune-cookies.md';
 import dataPipelinesUrl from './blogs/observability-pipeline-formats.md';
+import schemaMigrationsGoUrl from './blogs/schema-migrations-go.md';
 
 // Blog post metadata - ADD NEW POSTS HERE
 const blogPostsMeta = [
+    {
+        id: "schema-migrations-go",
+        title: "Schema Migrations in Go: A Study Guide",
+        date: "October 2026",
+        sortDate: "2026-10-06",
+        author: "Jane Waithira",
+        excerpt: "The mental model, patterns, and mechanics of database schema migrations in Go — tracking tables, up/down pairs, embed.FS, credential separation, locking, failure recovery, and the main ecosystem tools.",
+        coverImage: "/images/blog/default.jpg",
+        tags: ["Go", "PostgreSQL", "Databases", "Migrations", "Kubernetes", "DevOps"],
+        contentUrl: schemaMigrationsGoUrl,
+    },
     {
         id: "observability-pipeline-formats",
         title: "Observability Pipelines Demystified: Wire Formats, OTLP, gRPC, Protobuf, Avro, and the OSI Model",
